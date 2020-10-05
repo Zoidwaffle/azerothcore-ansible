@@ -1,0 +1,11 @@
+SET GLOBAL sql_mode = '';
+CREATE USER '{{ azerothcore_db_user|quote }}'@'{{ azerothcore_db_server|quote }}' IDENTIFIED BY '{{ azerothcore_db_password|quote }}' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
+GRANT USAGE ON *.* TO '{{ azerothcore_db_user|quote }}'@'{{ azerothcore_db_server|quote }}';
+UPDATE mysql.user SET Super_Priv='Y' WHERE user='{{ azerothcore_db_user|quote }}' AND host='{{ azerothcore_db_server|quote }}';
+FLUSH PRIVILEGES;
+CREATE DATABASE {{ azerothcore_db_world }} DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE {{ azerothcore_db_characters }}  DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE {{ azerothcore_db_auth }} DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+GRANT ALL PRIVILEGES ON `{{ azerothcore_db_world }}` . * TO '{{ azerothcore_db_user }}'@'{{ azerothcore_db_server }}' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON `{{ azerothcore_db_characters }}` . * TO '{{ azerothcore_db_user }}'@'{{ azerothcore_db_server }}' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON `{{ azerothcore_db_auth }}` . * TO '{{ azerothcore_db_user }}'@'{{ azerothcore_db_server }}' WITH GRANT OPTION;

@@ -1,0 +1,26 @@
+---
+#####################
+# Create the proper databases/user needed
+#####################
+
+- name: Script to create initial databases and user
+  template:
+    src: "sql/create_mysql.sql"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/"
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
+
+# Only run this if there is no previous server aka a new install
+- name: Create databases, handle users etc.
+  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/create_mysql.sql"
+  when: former_build.stat.exists is defined and former_build.stat.exists == false
+  become: true
+
+#####################
+# Importing SQL
+#####################
+
+# To be done on every build?
+- name: Assemble and import iinitial databases
+  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 5"
+  when: former_build.stat.exists is defined and former_build.stat.exists == false

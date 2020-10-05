@@ -1,0 +1,119 @@
+---
+#####################
+# Main configuration files
+#####################
+
+- name: Create server log folder
+  file:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/log"
+    state: "directory"
+    mode: "0755"
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
+
+- name: Check if previous 'worldserver.conf' exists
+  stat:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/worldserver.conf"
+  register: worldserver_conf
+
+- name: Copy previous 'worldserver.conf'
+  copy:
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/worldserver.conf"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/"
+    remote_src: "yes"
+  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists
+
+- name: Copy new 'worldserver.conf'
+  copy:
+    src: "/home/{{ azerothcore_user }}//{{ azerothcore_server_release }}/azerothcore_server/etc/worldserver.conf.dist"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/worldserver.conf"
+    remote_src: "yes"
+  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
+
+- name: Modify new 'worldserver.conf'
+  lineinfile:
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/worldserver.conf"
+    regexp: "{{ item.regexmatch }}"
+    line: "{{ item.insertstring }}"
+  with_items:
+    - { regexmatch: '^DataDir =', insertstring: 'DataDir = "../data"' }
+    - { regexmatch: '^LogsDir =', insertstring: 'LogsDir = "../log"' }
+    - { regexmatch: '^LoginDatabaseInfo ', insertstring: 'LoginDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_auth }}"' }
+    - { regexmatch: '^WorldDatabaseInfo ', insertstring: 'WorldDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_world }}"' }
+    - { regexmatch: '^CharacterDatabaseInfo ', insertstring: 'CharacterDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_characters }}"' }
+  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
+
+- name: Check if previous 'authserver.conf' exists
+  stat:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/authserver.conf"
+  register: authserver_conf
+
+- name: Copy previous 'authserver.conf'
+  copy:
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/authserver.conf"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/"
+    remote_src: "yes"
+  when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists
+
+- name: Copy new 'authserver.conf'
+  copy:
+    src: "/home/{{ azerothcore_user }}//{{ azerothcore_server_release }}/azerothcore_server/etc/authserver.conf.dist"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/authserver.conf"
+    remote_src: "yes"
+  when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
+
+- name: Modify new 'authserver.conf'
+  lineinfile:
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/authserver.conf"
+    regexp: "{{ item.regexmatch }}"
+    line: "{{ item.insertstring }}"
+  with_items:
+    - { regexmatch: '^LoginDatabaseInfo ', insertstring: 'LoginDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_auth }}"' }
+  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
+
+#####################
+# Database script
+#####################
+
+- name: Copy 'config.sh' from the source
+  copy:
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/conf/dist/config.sh"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/conf/"
+    remote_src: "yes"
+
+- name: Modify new 'config.sh'
+  replace:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/conf/config.sh"
+    regexp: "{{ item.regexmatch }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - { regexmatch: "MYSQL_USER='.*';", replace: "MYSQL_USER='{{ azerothcore_db_user }}'" }
+    - { regexmatch: "MYSQL_PASS='.*';", replace: "MYSQL_PASS='{{ azerothcore_db_password }}'" }
+    - { regexmatch: "MYSQL_HOST='.*';", replace: "MYSQL_HOST='{{ azerothcore_db_server }}'" }
+    - { regexmatch: "^DB_AUTH_NAME=.*", replace: 'DB_AUTH_NAME="{{ azerothcore_db_auth }}"' }
+    - { regexmatch: "^DB_CHARACTERS_NAME=.*", replace: 'DB_CHARACTERS_NAME="{{ azerothcore_db_characters }}"' }
+    - { regexmatch: "^DB_WORLD_NAME=.*", replace: 'DB_WORLD_NAME="{{ azerothcore_db_world }}"' }
+
+#####################
+# Systemd files
+#####################
+
+- name: Copy systemd files for easy stop/start/restart
+  template:
+    src: "etc/systemd/system/{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - authserver.service
+    - worldserver.service
+  become: true
+
+- name: Enable services
+  systemd:
+    enabled: "yes"
+    name:
+      - authserver
+      - worldserver
+  become: true
+  when: azerothcore_service == "enabled"

@@ -1,0 +1,22 @@
+# Inspired by https://github.com/zechs6437/trinity-systemd
+
+[Unit]
+Description=AzerothCore Authentication Server
+
+[Service]
+Type=forking
+WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin
+User={{ azerothcore_user }}
+
+ExecStart=/usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin/authserver
+
+ExecReload=/usr/bin/killall -w -s 15 authserver; /usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin/authserver
+
+ExecStop=/usr/bin/killall -w -s 15 authserver
+RestartSec=10s
+
+Restart=always
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,87 @@
+---
+#####################
+# Log we started the role
+#####################
+
+- name: Write ansible log
+  shell: date "+{{ ansible_log_date_format }} - azerothcore" >> "{{ ansible_log_file }}"
+  changed_when: False
+  become: true
+
+#####################
+# Dependancies
+#####################
+
+- name: Include task for dependancies
+  include_tasks: "tasks/dependancies.yml"
+
+#####################
+# The game client location
+#####################
+
+- name: Check if the client folder exists
+  stat:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}"
+  register: client_folder
+
+- name: Notify of problems
+  debug:
+    msg: "You need to place the client in folder '/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}'"
+  when: client_folder.stat.exists == false
+
+- meta: end_play
+  when: client_folder.stat.exists == false
+
+#####################
+# Source code and build
+#####################
+
+- name: Include task for building
+  include_tasks: "tasks/build.yml"
+
+#####################
+# Handle maps
+#####################
+
+- name: Include task for maps
+  include_tasks: "tasks/maps.yml"
+
+#####################
+# Configuration files
+#####################
+
+- name: Include task for configuration
+  include_tasks: "tasks/configuration.yml"
+
+#####################
+# Database
+#####################
+
+- name: Include task for database
+  include_tasks: "tasks/database.yml"
+
+#####################
+# Symlink new build
+#####################
+
+# Ownership doesn't seem to work?
+- name: Update symlink to the latest release
+  file:
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}"
+    state: link
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
+
+#####################
+# Reset ownership
+#####################
+
+# Just to be sure, a lot is done as root above
+- name: Recursively change ownership of AzerothCore symlink
+  file:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}"
+    state: directory
+    recurse: yes
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"

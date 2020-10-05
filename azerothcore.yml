@@ -1,0 +1,6 @@
+---
+- hosts: "{{ target }}"
+  connection: ssh
+  become: no
+  roles:
+    - azerothcore

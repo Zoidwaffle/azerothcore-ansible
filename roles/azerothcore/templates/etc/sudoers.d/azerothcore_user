@@ -1,0 +1,9 @@
+# AzerothCore can be controlled by the dedicated user without password
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl start worldserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl stop worldserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl reload worldserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl status worldserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl start authserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl stop authserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl reload authserver
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl status authserver

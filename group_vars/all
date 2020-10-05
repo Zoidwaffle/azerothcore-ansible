@@ -1,0 +1,41 @@
+---
+# Ansible log
+ansible_log_date_format: "%Y-%m-%d %H:%M"
+ansible_log_file: "/var/log/ansible_roles.log"
+
+# Unpriviliged user that AzerothCore will run as - everything will be placed in the home of this user
+# /home/{{ azerothcore }}/
+azerothcore_user: "azerothcore"
+# The password hash below is for 'azerothcore' and  is obviously not a safe password - modify it accordingly.
+# You can generate a new hash using: mkpasswd --method=SHA-512 --stdin your_passwprd_here
+azerothcore_user_password: "$6$sWb.Lkqrq2SAGW$1I9qFUUnadQkOjigb6SKfrYEs2oegbm1kFVnTg0ZiRTNLhzV1NSz0jYDZYr4tpfGtc0jFKrzgZQoEjpyRprAW."
+
+# game client - "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}"
+azerothcore_wow_client: "wow_client"
+
+# source code - "/home/{{ azerothcore_user }}/{{ azerothcore_source }}"
+azerothcore_source: "azerothcore_source"
+
+# Server folder name - this will be used for the symlink to the current live version
+# as well as the reference name suffixed by the commit tag
+azerothcore_server: "azerothcore_release"
+
+# database information - for now only tested using "localhost"
+azerothcore_db_user: "azerothcore"
+azerothcore_db_server: "localhost"
+azerothcore_db_password: "azerothcore"
+
+# the 3 databases used
+azerothcore_db_characters: "acore_characters"
+azerothcore_db_auth: "acore_auth"
+azerothcore_db_world: "acore_world"
+
+# realmlist - the address of where your server runs and the name for it
+azerothcore_realmlist_ip: "127.0.0.1" 
+azerothcore_realmlist_name: "My Realm" 
+
+# enable server as a service (systemd), value can be "enable" or "disable"
+azerothcore_service: "enable"
+
+# the build to check out from Git
+azerothcore_version: "master"

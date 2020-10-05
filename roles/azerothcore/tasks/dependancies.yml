@@ -1,0 +1,77 @@
+---
+
+#####################
+# Dependancies
+#####################
+
+- name: Install package dependancies
+  apt:
+    name:
+      - clang
+      - cmake
+      - default-libmysqlclient-dev
+      - g++
+      - gcc
+      - git
+      - libace-6.*
+      - libace-dev
+      - libbz2-dev
+      - libncurses-dev
+      - libreadline-dev
+      - libssl-dev
+      - make
+      - mariadb-server
+      - screen
+      - sudo
+  become: true
+
+#####################
+# User for the project
+#####################
+
+- name: Create user
+  user:
+    name: "{{ azerothcore_user }}"
+    home: "/home/{{ azerothcore_user }}"
+    shell: "/bin/bash"
+    state: present
+    password: "{{ azerothcore_user_password }}"
+    groups: "sudo"
+  become: true
+  register: user_created
+
+- name: Allow various sudo commands
+  template:
+    src: "etc/sudoers.d/azerothcore_user"
+    dest: "/etc/sudoers.d/{{ azerothcore_user }}"
+    owner: "root"
+    group: "root"
+    mode: 0440
+    validate: /usr/sbin/visudo -cf %s
+  become: true
+
+#####################
+# The game client location
+#####################
+
+- name: Check if the client folder exists
+  stat:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}"
+  register: client_folder
+
+- name: Notify of problems
+  debug:
+    msg: "You need to place the client in folder '/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}'"
+  when: client_folder.stat.exists == false
+
+#####################
+# If the local user was just created, we will exit
+#####################
+
+- name: Information if we need to restart Ansible or not
+  debug:
+    msg: "User '{{ azerothcore_user }}' just created or updated. Please run the playbook again as user '{{ azerothcore_user }}'!"
+  when: user_created.changed
+
+- meta: end_play
+  when: user_created.changed or client_folder.stat.exists == false
