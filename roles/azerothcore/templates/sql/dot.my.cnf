@@ -1,0 +1,4 @@
+[client]
+user={{ azerothcore_db_user }}
+password={{ azerothcore_db_password }}
+host={{ azerothcore_db_server }}

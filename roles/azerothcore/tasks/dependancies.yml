@@ -51,6 +51,12 @@
     validate: /usr/sbin/visudo -cf %s
   become: true
 
+- name: Allow using MySQL without typing in passwords
+  template:
+    src: "sql/dot.my.cnf"
+    dest: "/home/{{ azerothcore_user }}/.my.cnf"
+    mode: 0600
+
 #####################
 # The game client location
 #####################
