@@ -20,6 +20,11 @@
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/"
   register: previousserver_conf
 
+- name: Find all files present from previous server
+  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/"
+  register: previousserver_files
+  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+
 # Copy all old files, but don't overwrite any existing files
 - name: Copy all previous configuration files
   copy:
@@ -27,8 +32,8 @@
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/"
     force: "no" # This is important
     remote_src: "yes"
-  with_fileglob:
-    - "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/*"
+  with_items:
+    - "{{ previousserver_files.stdout_lines }}"
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 #####################
