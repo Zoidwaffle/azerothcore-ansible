@@ -67,9 +67,11 @@
 - name: Stop world- and authserver
   systemd:
     state: stopped
-    name:
-      - worldserver
-      - authserver
+    name: "{{ item }}"
+  with_items:
+    - "worldserver"
+    - "authserver"
+  become: yes
 
 #####################
 # Symlink new build
@@ -91,7 +93,8 @@
 - name: Start world- and authserver
   systemd:
     state: started
-    name:
-      - worldserver
-      - authserver
-
+    name: "{{ item }}"
+  with_items:
+    - "worldserver"
+    - "authserver"
+  become: yes
