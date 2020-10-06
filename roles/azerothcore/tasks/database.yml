@@ -20,7 +20,18 @@
 # Importing SQL
 #####################
 
-# To be done on every build?
 - name: Assemble and import initial databases
   shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 5"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
+
+#####################
+# Backup SQL
+#####################
+
+- name: Backup databases
+  shell: mysqldump {{ item }} | gzip > "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_sql/{{ item }}.sql.gz"
+  with_items:
+    - "{{ azerothcore_db_auth }}"
+    - "{{ azerothcore_db_world }}"
+    - "{{ azerothcore_db_characters }}"
+  when: former_build.stat.exists is defined and former_build.stat.exists == true
