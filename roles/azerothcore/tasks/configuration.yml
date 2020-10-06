@@ -37,6 +37,26 @@
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 #####################
+# Existing DBC files
+#####################
+
+- name: Find all DBC files present from previous server
+  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/data/dbc/"
+  register: dbc_files
+  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+
+# There might be custom DBC files, such as from the "mod-arac" module
+- name: Copy all previous non-existant DBC files
+  copy:
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/data/dbc/{{ item }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/data/dbc/"
+    force: "no" # This is important
+    remote_src: "yes"
+  with_items:
+    - "{{ dbc_files.stdout_lines }}"
+  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+
+#####################
 # New configuration files
 #####################
 
