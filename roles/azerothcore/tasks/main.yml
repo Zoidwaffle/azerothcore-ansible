@@ -54,16 +54,10 @@
   include_tasks: "tasks/configuration.yml"
 
 #####################
-# Database
-#####################
-
-- name: Include task for database
-  include_tasks: "tasks/database.yml"
-
-#####################
 # Stop old server
 #####################
 
+# Stop before the database dumps etc. below
 - name: Stop world- and authserver
   systemd:
     state: stopped
@@ -72,6 +66,13 @@
     - "worldserver"
     - "authserver"
   become: yes
+
+#####################
+# Database
+#####################
+
+- name: Include task for database
+  include_tasks: "tasks/database.yml"
 
 #####################
 # Symlink new build
