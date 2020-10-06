@@ -12,16 +12,28 @@
     group: "{{ azerothcore_user }}"
 
 #####################
-# Main configuration files
+# Existing configuration files
 #####################
 
-- name: Copy all previous '.conf' files
+- name: Check if previous server configuration exists
+  stat:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/"
+  register: previousserver_conf
+
+# Copy all old files, but don't overwrite any existing files
+- name: Copy all previous configuration files
   copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/"
+    force: "no" # This is important
     remote_src: "yes"
   with_fileglob:
-    - "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/*.conf"
+    - "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/etc/*"
+  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+
+#####################
+# New configuration files
+#####################
 
 - name: Check if previous 'worldserver.conf' exists
   stat:
@@ -30,7 +42,7 @@
 
 - name: Copy new 'worldserver.conf'
   copy:
-    src: "/home/{{ azerothcore_user }}//{{ azerothcore_server_release }}/azerothcore_server/etc/worldserver.conf.dist"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/worldserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/worldserver.conf"
     remote_src: "yes"
   when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
@@ -55,7 +67,7 @@
 
 - name: Copy new 'authserver.conf'
   copy:
-    src: "/home/{{ azerothcore_user }}//{{ azerothcore_server_release }}/azerothcore_server/etc/authserver.conf.dist"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/authserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/etc/authserver.conf"
     remote_src: "yes"
   when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
@@ -68,7 +80,7 @@
   with_items:
     - { regexmatch: '^LoginDatabaseInfo ', insertstring: 'LoginDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_auth }}"' }
     - { regexmatch: '^LogsDir =', insertstring: 'LogsDir = "../log"' }
-  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
+  when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
 
 #####################
 # Database script
