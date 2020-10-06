@@ -25,29 +25,29 @@
     msg: "Server for release {{ git_commit_tag.stdout }} already exists, will exit"
   when: release_folder.stat.exists
 
-  #- meta: end_play
-  #  when: release_folder.stat.exists
-  #
-  #- name: Create build folder
-  #  file:
-  #    path: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build"
-  #    mode: "0755"
-  #    state: "directory"
-  #    owner: "{{ azerothcore_user }}"
-  #    group: "{{ azerothcore_user }}"
-  #
-  #- name: Configure before compiling
-  #  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server" -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
-  #  become_user: "{{ azerothcore_user }}"
-  #
-  #- name: Make clean
-  #  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make clean
-  #  become_user: "{{ azerothcore_user }}"
-  #
-  #- name: Compile AzerothCore server
-  #  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make -j $(nproc)
-  #  become_user: "{{ azerothcore_user }}"
-  #
-  #- name: Install AzerothCore server
-  #  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make install
-  #  become_user: "{{ azerothcore_user }}"
+- meta: end_play
+  when: release_folder.stat.exists
+
+- name: Create build folder
+  file:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build"
+    mode: "0755"
+    state: "directory"
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
+
+- name: Configure before compiling
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server" -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
+  become_user: "{{ azerothcore_user }}"
+
+- name: Make clean
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make clean
+  become_user: "{{ azerothcore_user }}"
+
+- name: Compile AzerothCore server
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make -j $(nproc)
+  become_user: "{{ azerothcore_user }}"
+
+- name: Install AzerothCore server
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make install
+  become_user: "{{ azerothcore_user }}"
