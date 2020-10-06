@@ -61,6 +61,17 @@
   include_tasks: "tasks/database.yml"
 
 #####################
+# Stop old server
+#####################
+
+- name: Stop world- and authserver
+  systemd:
+    state: stopped
+    name:
+      - worldserver
+      - authserver
+
+#####################
 # Symlink new build
 #####################
 
@@ -74,14 +85,13 @@
     group: "{{ azerothcore_user }}"
 
 #####################
-# Reset ownership
+# Start new server
 #####################
 
-# Just to be sure, a lot is done as root above
-- name: Recursively change ownership of AzerothCore symlink
-  file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}"
-    state: directory
-    recurse: yes
-    owner: "{{ azerothcore_user }}"
-    group: "{{ azerothcore_user }}"
+- name: Start world- and authserver
+  systemd:
+    state: started
+    name:
+      - worldserver
+      - authserver
+

@@ -1,6 +1,6 @@
 ---
 #####################
-# Main configuration files
+# Folder creation
 #####################
 
 - name: Create server log folder
@@ -10,6 +10,10 @@
     mode: "0755"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
+
+#####################
+# Main configuration files
+#####################
 
 - name: Check if previous 'worldserver.conf' exists
   stat:
@@ -69,6 +73,7 @@
     line: "{{ item.insertstring }}"
   with_items:
     - { regexmatch: '^LoginDatabaseInfo ', insertstring: 'LoginDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_auth }}"' }
+    - { regexmatch: '^LogsDir =', insertstring: 'LogsDir = "../log"' }
   when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
 
 #####################

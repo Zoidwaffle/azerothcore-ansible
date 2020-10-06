@@ -8,7 +8,7 @@
 # This is not working as intended....
 # Compare the old tools with the new - if the same, no updates will be needed
 - name: Check if map-tools have been updated
-  shell: diff -qrs "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/bin/" "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin/" | egrep -v "(worldserver|authserver| are identical)" | wc -l
+  shell: diff -qrs "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server/bin/" "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin/" | egrep "(mmaps_generator|mapextractor|vmap4(assembler|extractor))" | egrep -v " are identical" | wc -l
   register: map_files_diff
   when: former_build.stat.islnk is defined and former_build.stat.islnk
 

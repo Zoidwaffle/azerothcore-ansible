@@ -21,6 +21,6 @@
 #####################
 
 # To be done on every build?
-- name: Assemble and import iinitial databases
+- name: Assemble and import initial databases
   shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 5"
   when: former_build.stat.exists is defined and former_build.stat.exists == false

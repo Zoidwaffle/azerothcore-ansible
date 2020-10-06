@@ -21,8 +21,9 @@
       - libssl-dev
       - make
       - mariadb-server
-      - screen
+      - screen # for running the world- and authserver
       - sudo
+      - unzip # for extra modules etc.
   become: true
 
 #####################
