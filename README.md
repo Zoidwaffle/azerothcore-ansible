@@ -80,6 +80,7 @@ Scripts to handle the server using systemd have been added - so to stop and star
 ```
 sudo systemctl start worldserver
 sudo systemctl stop worldserver
+sudo systemctl reload worldserver
 sudo systemctl status worldserver
 ```
 
@@ -88,6 +89,7 @@ Similar for authserver:
 ```
 sudo systemctl start authserver
 sudo systemctl stop authserver
+sudo systemctl reload authserver
 sudo systemctl status authserver
 ```
 
