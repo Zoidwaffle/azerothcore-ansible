@@ -140,7 +140,7 @@ sudo systemctl stop authserver
 sudo systemctl stop worldserver
 # Restore database to previous state - be careful, consider a backup first
 zcat azerothcore_release_be09e0/azerothcore_sql/acore_characters.sql.gz | mysql acore_characters
-zcat azerothcore_release_be09e0/azerothcore_sql/acore_characters.sql.gz | mysql acore_characters
+zcat azerothcore_release_be09e0/azerothcore_sql/acore_auth.sql.gz | mysql acore_auth
 zcat azerothcore_release_be09e0/azerothcore_sql/acore_world.sql.gz | mysql acore_world
 # Change active version of the software
 rm azerothcore_release
