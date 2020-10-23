@@ -47,9 +47,6 @@
     file_type: directory
   register: modules_folder
 
-- debug:
-    msg: "{{ modules_folder }}"
-
 - name: Update modules
   shell: cd "{{ item.path }}" && git pull
   with_items:
