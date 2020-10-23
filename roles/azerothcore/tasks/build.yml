@@ -1,10 +1,18 @@
 ---
+#####################
+# Main source code
+#####################
+
 - name: Checkout AzerothCore code
   git:
     repo: "git://github.com/AzerothCore/AzerothCore.git"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}"
     version: "{{ azerothcore_version }}"
   become_user: "{{ azerothcore_user }}"
+
+#####################
+# Do we have updates or not...
+#####################
 
 - name: Get the latest (short) Git commit tag
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}" && git rev-parse --short=6 $(git rev-parse HEAD)
@@ -27,6 +35,30 @@
 
 - meta: end_play
   when: release_folder.stat.exists
+
+#####################
+# Custom modules
+#####################
+
+- name: Look for modules
+  find:
+    paths: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/modules/"
+    recurse: no
+    file_type: directory
+  register: modules_folder
+
+- debug:
+    msg: "{{ modules_folder }}"
+
+- name: Update modules
+  shell: cd "{{ item.path }}" && git pull
+  with_items:
+    - "{{ modules_folder.files }}"
+  when: modules_folder is defined and modules_folder != ""
+
+#####################
+# Build
+#####################
 
 - name: Create build folder
   file:
