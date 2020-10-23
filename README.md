@@ -16,13 +16,16 @@ You need a target server running Debian 10 Buster where the software will be ins
 
 To initiate the installation, you need a Linux machine with Ansible. This can be a different machine or the target server itself.
 
-Install the basic requirements - on Debian as root:
-`sudo su
+Install the basic requirements - on Debian:
+```
+# If you are already root, skip the 'sudo su' command
+sudo su
 apt update
 apt install git python-pip
-pip install ansible`
+pip install ansible
+```
 
-The reason for using **pip** is that the version of Ansible will be newer.
+The reason for using **pip** is that the version of Ansible will be newer than if using the default from normal repositories.
 
 ## Preparations
 
@@ -38,13 +41,11 @@ before running Ansible in case you want to change some defaults. If you do chang
 
 Be aware that since the server will run as its own user and the game client is required for map generation, you might have to run the playbook twice. This is not an error, just see the messages and do as instructed until all is done. 
 
-Instead of the IP address you can use a DNS reference or localhost (if running this on the target server itself).
-
 ### Setup the initial parts
 
 Initial run of Ansible. This requires root (or sudo) to install system dependancies and create the proper user. This is ONLY required for the very initial run.
 
-Replace ***IP*** with the proper address in the examples below.
+Replace ***IP*** with the proper address in the examples below. Instead of the IP address you can use a DNS reference or localhost (if running this on the target server itself).
 
 If you are root:
 
