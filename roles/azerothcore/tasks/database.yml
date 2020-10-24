@@ -5,17 +5,18 @@
 
 - name: Database related scripts
   template:
-    src: "sql/{{ item }}"
+    src: "sql/{{ item.file }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
+    mode: "{{ item.mode }}"
   with_items:
-    - "create_databases.sql"
-    - "backup.sh"
+    - { file: "create_databases.sql", mode: "0644" }
+    - { file: "backup.sh", mode: "0755" }
 
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
-  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/create_mysql.sql"
+  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/create_databases.sql"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
   become: true
 
@@ -32,9 +33,5 @@
 #####################
 
 - name: Backup databases
-  shell: mysqldump {{ item }} | gzip > "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_sql/{{ item }}.sql.gz"
-  with_items:
-    - "{{ azerothcore_db_auth }}"
-    - "{{ azerothcore_db_world }}"
-    - "{{ azerothcore_db_characters }}"
+  shell: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/backup.sh"
   when: former_build.stat.exists is defined and former_build.stat.exists == true
