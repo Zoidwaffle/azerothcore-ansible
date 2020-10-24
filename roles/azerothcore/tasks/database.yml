@@ -11,8 +11,9 @@
     group: "{{ azerothcore_user }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { file: "create_databases.sql", mode: "0644" }
     - { file: "backup.sh", mode: "0755" }
+    - { file: "create_databases.sql", mode: "0644" }
+    - { file: "drop_databases.sh", mode: "0755" }
 
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
