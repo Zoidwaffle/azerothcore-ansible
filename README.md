@@ -127,7 +127,7 @@ Inside these folders, there are 2 other folders:
 # This is where the compiled files end up along with logs and configurations
 azerothcore_server 
 # When a newer version is compiled, there will be backups of all databases placed here
-azerothcore_sql
+azerothcore_db
 ```
 
 If you are compiling often, this will take up a lot space, so remember to clean up once in a while.
@@ -142,9 +142,9 @@ Example as how to roll back to a previous build - you are in the `/home/azerothc
 sudo systemctl stop authserver
 sudo systemctl stop worldserver
 # Restore database to previous state - be careful, consider a backup first
-zcat azerothcore_release_be09e0/azerothcore_sql/acore_characters.sql.gz | mysql acore_characters
-zcat azerothcore_release_be09e0/azerothcore_sql/acore_auth.sql.gz | mysql acore_auth
-zcat azerothcore_release_be09e0/azerothcore_sql/acore_world.sql.gz | mysql acore_world
+zcat azerothcore_release_be09e0/azerothcore_db/acore_characters.sql.gz | mysql acore_characters
+zcat azerothcore_release_be09e0/azerothcore_db/acore_auth.sql.gz | mysql acore_auth
+zcat azerothcore_release_be09e0/azerothcore_db/acore_world.sql.gz | mysql acore_world
 # Change active version of the software
 rm azerothcore_release
 ln -s azerothcore_release_be09e0 azerothcore_release
