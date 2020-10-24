@@ -31,7 +31,7 @@ The reason for using **pip** is that the version of Ansible will be newer than i
 
 Checkout this repository.
 
-git clone https://github.com/Zoidwaffle/AzerothCore-Ansible.git
+`git clone https://github.com/Zoidwaffle/AzerothCore-Ansible.git`
 
 You don't need to change anything to get a basic server up and running, but you should have a look in the file:
 
@@ -73,6 +73,8 @@ Now you can run the playbook again as your new user and setup everything.
 
 `ansible-playbook azerothcore.yml --extra-vars '{"target": "IP"}' -i IP, -u azerothcore --ask-pass --ask-become`
 
+The map extraction will take a while, so be patient! Grab some coffee, go for a walk etc..
+
 ### Running the server
 
 Scripts to handle the server using systemd have been added - so to stop and start the services as user azerothcore do:
@@ -102,9 +104,24 @@ screen -r worldserver
 
 ### Important info regarding folder structure
 
-This is where the source code and all modules are located.
-
-`azerothcore_source`
+This is the default structure and some important files with comments.
+```
+ .
+ ├── azerothcore_release           # This is a symlink to the latest build
+ ├── gazerothcore_release_b3a96    # Latest build (the hash suffix will change)
+ │   ├── azerothcore_db            # Folder with database tools and backups
+ │   │   ├── backup.sh             # Backup all databases easily
+ │   │   ├── create_databases.sql  # Create the user and databases needed
+ │   │   └── drop_databases.sh     # Drop the databases and user (if recreating from scratch)
+ │   └── azerothcore_server        # The compiled server
+ │       ├── bin                   # Main binaries
+ │       ├── data                  # DBC and map-files
+ │       ├── etc                   # Server configuration files
+ │       └── log                   # Log files
+ ├── azerothcore_source            # The source code
+ │   └── modules                   # Various modules
+ └─── wow_client                   # The game client
+```
 
 When AzerothCore is compiled, there will be created a folder with the latest commit as reference. Example:
 
@@ -119,15 +136,6 @@ When compiling a new version, the old version will not be overwritten. So you wi
 ```
 azerothcore_release_be09e0
 azerothcore_release_90a10a
-```
-
-Inside these folders, there are 2 other folders:
-
-```
-# This is where the compiled files end up along with logs and configurations
-azerothcore_server 
-# When a newer version is compiled, there will be backups of all databases placed here
-azerothcore_db
 ```
 
 If you are compiling often, this will take up a lot space, so remember to clean up once in a while.
