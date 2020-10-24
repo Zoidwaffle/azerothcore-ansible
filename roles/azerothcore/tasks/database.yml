@@ -3,12 +3,15 @@
 # Create the proper databases/user needed
 #####################
 
-- name: Script to create initial databases and user
+- name: Database related scripts
   template:
-    src: "sql/create_mysql.sql"
+    src: "sql/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_sql/"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
+  with_items:
+    - "create_databases.sql"
+    - "backup.sh"
 
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
