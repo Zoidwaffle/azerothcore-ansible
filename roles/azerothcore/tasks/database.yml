@@ -33,5 +33,5 @@
 #####################
 
 - name: Backup databases
-  shell: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_db/backup.sh"
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_db/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true
