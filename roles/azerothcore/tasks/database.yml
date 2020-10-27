@@ -36,3 +36,11 @@
 - name: Backup databases
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_db/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true
+
+#####################
+# Updating SQL after the backup
+#####################
+
+- name: Update databases
+  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 5"
+  when: former_build.stat.exists is defined and former_build.stat.exists == false
