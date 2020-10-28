@@ -66,7 +66,7 @@
     group: "{{ azerothcore_user }}"
 
 - name: Configure before compiling
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/azerothcore_server" -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server" -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
   become_user: "{{ azerothcore_user }}"
 
 - name: Make clean

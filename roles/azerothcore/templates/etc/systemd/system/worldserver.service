@@ -3,12 +3,12 @@ Description=AzerothCore World Server
 
 [Service]
 Type=forking
-WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin
+WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin
 User={{ azerothcore_user }}
 
-ExecStart=/usr/bin/screen -dmS worldserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin/worldserver
+ExecStart=/usr/bin/screen -dmS worldserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin/worldserver
 
-ExecReload=/usr/bin/screen -S worldserver -p 0 -X stuff "server shutdown force 0\\r"; /usr/bin/screen -dmS worldserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/azerothcore_server/bin/worldserver
+ExecReload=/usr/bin/screen -S worldserver -p 0 -X stuff "server shutdown force 0\\r"; /usr/bin/screen -dmS worldserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin/worldserver
 
 ExecStop=/usr/bin/screen -S worldserver -p 0 -X stuff "server shutdown force 0\\r"
 RestartSec=10s
