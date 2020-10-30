@@ -138,17 +138,36 @@ azerothcore_be09e0
 azerothcore_90a10a
 ```
 
+### Maintenance
+
 If you are compiling often, this will take up a lot space, so remember to clean up once in a while.
 
-The benefit is that this allows you to roll back to previous builds fairly easily.
+#### Backup databses
+
+Example as how to do a database backup - you are in the `/home/azerothcore/` folder:
+
+```
+# Stop the running services, this is recommended!
+sudo systemctl stop authserver
+sudo systemctl stop worldserver
+# Go to the folder for database files
+cd azerothcore/database/
+# Take the backup
+./backup.sh
+# Start the services again
+sudo systemctl start authserver
+sudo systemctl start worldserver
+```
+
+#### Roll back to previous release
 
 Example as how to roll back to a previous build - you are in the `/home/azerothcore/` folder:
-
 
 ```
 # Stop the running services
 sudo systemctl stop authserver
 sudo systemctl stop worldserver
+# Find the release to return to - here it's be09e0
 # Restore database to previous state - be careful, consider a backup first
 zcat azerothcore_be09e0/database/acore_characters.sql.gz | mysql acore_characters
 zcat azerothcore_be09e0/database/acore_auth.sql.gz | mysql acore_auth
@@ -159,4 +178,22 @@ ln -s azerothcore_be09e0 azerothcore
 # Start the services again
 sudo systemctl start authserver
 sudo systemctl start worldserver
+```
+
+#### Compile from scratch
+
+Example as how to start over setting up the server - you are in the `/home/azerothcore/` folder:
+
+```
+# Stop the running services
+sudo systemctl stop authserver
+sudo systemctl stop worldserver
+# Go to the folder for database files
+cd azerothcore/database/
+# Drop the databases and user
+sudo ./drop_databases.sh
+# Remove the symlink - go to /home/azerothcore/ again
+cd -
+rm azerothcore
+# You can rename or delete the folder - then run Ansible again
 ```
