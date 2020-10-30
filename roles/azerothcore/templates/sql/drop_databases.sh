@@ -12,7 +12,13 @@ hline(){
 }
 
 hline
-echo "WARNING: This will drop AzerothCore databases and the AzerothCore user"
+echo "WARNING: This will drop the following databases:"
+echo "-  {{ azerothcore_db_characters }}"
+echo "-  {{ azerothcore_db_auth }}"
+echo "-  {{ azerothcore_db_world }}"
+echo "and the user:"
+echo "-  {{ azerothcore_db_user }}"
+hline
 echo "Take a backup if you want to keep your data!"
 hline
 read -p "Continue? (y/n) [n] : " yn; [[ -n ${yn} ]] || yn="n"
