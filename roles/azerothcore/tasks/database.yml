@@ -25,6 +25,16 @@
 # Importing SQL
 #####################
 
+- name: Custom SQL files
+  template:
+    src: "sql/{{ item.file }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/data/sql/custom/{{ item.destination }}/"
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { file: "auth_custom.sql", destination: "db_auth", mode: "0644" }
+
 - name: Assemble and import initial databases
   shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 5"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
