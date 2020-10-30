@@ -31,7 +31,8 @@ azerothcore_db_auth: "acore_auth"
 azerothcore_db_world: "acore_world"
 
 # realmlist - the address of where your server runs and the name for it
-azerothcore_realmlist_ip: "127.0.0.1" 
+azerothcore_realmlist_ip: "127.0.0.1"
+azerothcore_realmlist_local_ip: "127.0.0.1"
 azerothcore_realmlist_name: "My Realm" 
 
 # enable server as a service (systemd), value can be "enable" or "disable"
