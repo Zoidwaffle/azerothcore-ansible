@@ -18,7 +18,7 @@ azerothcore_source: "azerothcore_source"
 
 # Server folder name - this will be used for the symlink to the current live version
 # as well as the reference name suffixed by the commit tag
-azerothcore_server: "azerothcore_release"
+azerothcore_server: "azerothcore"
 
 # database information - for now only tested using "localhost"
 azerothcore_db_user: "azerothcore"

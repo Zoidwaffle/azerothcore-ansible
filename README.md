@@ -107,8 +107,8 @@ screen -r worldserver
 This is the default structure and some important files with comments.
 ```
  .
- ├── azerothcore_release           # This is a symlink to the latest build
- ├── azerothcore_release_b3a96    # Latest build (the hash suffix will change)
+ ├── azerothcore           # This is a symlink to the latest build
+ ├── azerothcore_b3a96    # Latest build (the hash suffix will change)
  │   ├── database                  # Folder with database tools and backups
  │   │   ├── backup.sh             # Backup all databases easily
  │   │   ├── create_databases.sql  # Create the user and databases needed
@@ -125,17 +125,17 @@ This is the default structure and some important files with comments.
 
 When AzerothCore is compiled, there will be created a folder with the latest commit as reference. Example:
 
-`azerothcore_release_90a10a`
+`azerothcore_90a10a`
 
 There will also be created a symlink, to indicate the active version of the software. Example:
 
-`azerothcore_release -> azerothcore_release_90a10a`
+`azerothcore -> azerothcore_90a10a`
 
 When compiling a new version, the old version will not be overwritten. So you will end up with multiple folders such as:
 
 ```
-azerothcore_release_be09e0
-azerothcore_release_90a10a
+azerothcore_be09e0
+azerothcore_90a10a
 ```
 
 If you are compiling often, this will take up a lot space, so remember to clean up once in a while.
@@ -150,12 +150,12 @@ Example as how to roll back to a previous build - you are in the `/home/azerothc
 sudo systemctl stop authserver
 sudo systemctl stop worldserver
 # Restore database to previous state - be careful, consider a backup first
-zcat azerothcore_release_be09e0/database/acore_characters.sql.gz | mysql acore_characters
-zcat azerothcore_release_be09e0/database/acore_auth.sql.gz | mysql acore_auth
-zcat azerothcore_release_be09e0/database/acore_world.sql.gz | mysql acore_world
+zcat azerothcore_be09e0/database/acore_characters.sql.gz | mysql acore_characters
+zcat azerothcore_be09e0/database/acore_auth.sql.gz | mysql acore_auth
+zcat azerothcore_be09e0/database/acore_world.sql.gz | mysql acore_world
 # Change active version of the software
-rm azerothcore_release
-ln -s azerothcore_release_be09e0 azerothcore_release
+rm azerothcore
+ln -s azerothcore_be09e0 azerothcore
 # Start the services again
 sudo systemctl start authserver
 sudo systemctl start worldserver
