@@ -15,14 +15,23 @@ if [[ -z "${DESTINATION}" ]]; then
   DESTINATION="."
 fi
 
+hline(){
+  echo "********************************************************************************"
+}
+
 backup(){
-  echo -n "Making a backup of database \"$1\": "
+  echo -n "Backing up database \"$1\": "
   mysqldump "${1}" | gzip > "${DESTINATION}/${1}.${TIMESTAMP}.sql.gz" || echo "Failed"
   echo "Done"
 }
+
+hline
+echo "Initiating backups of databases"
+hline
 
 backup "acore_world"
 backup "acore_characters"
 backup "acore_auth"
 
+hline
 echo "Backups complete!"
