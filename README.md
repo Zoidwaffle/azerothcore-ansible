@@ -33,11 +33,11 @@ Checkout this repository.
 
 `git clone https://github.com/Zoidwaffle/AzerothCore-Ansible.git`
 
-You don't need to change anything to get a basic server up and running, but you should have a look in the file:
+You will need to copy the file:
 
-`group_vars/all.yml`
+`group_vars/all.dist -> group_vars/all`
 
-before running Ansible in case you want to change some defaults. If you do change the defaults, be aware that some details in the guide here might differ so adjust accordingly.
+and modify it to your liking before running Ansible in case you want to change some defaults. If you do change the defaults, be aware that some details in the guide here might differ so adjust accordingly.
 
 Be aware that since the server will run as its own user and the game client is required for map generation, you might have to run the playbook twice. This is not an error, just see the messages and do as instructed until all is done. 
 

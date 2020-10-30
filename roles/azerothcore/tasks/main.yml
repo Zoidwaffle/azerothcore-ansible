@@ -1,5 +1,24 @@
 ---
 #####################
+# Is the configuration file available
+#####################
+
+- name: Check for configuration file
+  stat:
+    path: "group_vars/all"
+  changed_when: False
+  delegate_to: localhost
+  register: local_settings
+
+- name: The file './group_vars/all' must exist
+  debug:
+    msg: "Please copy './group_vars/all.dist' -> ./group_vars/all' and modify it"
+  when: local_settings.stat is defined and local_settings.stat.exists == false
+
+- meta: end_play
+  when: local_settings.stat is defined and local_settings.stat.exists == false
+
+#####################
 # Log we started the role
 #####################
 
