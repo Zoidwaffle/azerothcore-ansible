@@ -142,7 +142,7 @@ azerothcore_90a10a
 
 If you are compiling often, this will take up a lot space, so remember to clean up once in a while.
 
-#### Backup databses
+#### Backup databases
 
 Example as how to do a database backup - you are in the `/home/azerothcore/` folder:
 
