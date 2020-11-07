@@ -107,8 +107,8 @@ screen -r worldserver
 This is the default structure and some important files with comments.
 ```
  .
- ├── azerothcore           # This is a symlink to the latest build
- ├── azerothcore_b3a96    # Latest build (the hash suffix will change)
+ ├── azerothcore                   # This is a symlink to the latest build
+ ├── azerothcore_b3a96             # Latest build (the hash suffix will change)
  │   ├── database                  # Folder with database tools and backups
  │   │   ├── backup.sh             # Backup all databases easily
  │   │   ├── create_databases.sql  # Create the user and databases needed
