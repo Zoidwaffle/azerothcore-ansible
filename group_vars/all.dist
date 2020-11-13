@@ -7,7 +7,7 @@ ansible_log_file: "/var/log/ansible_roles.log"
 # /home/{{ azerothcore }}/
 azerothcore_user: "azerothcore"
 # The password hash below is for 'azerothcore' and  is obviously not a safe password - modify it accordingly.
-# You can generate a new hash using: mkpasswd --method=SHA-512 --stdin your_passwprd_here
+# You can generate a new hash using: mkpasswd --method=SHA-512 --stdin your_password_here
 azerothcore_user_password: "$6$sWb.Lkqrq2SAGW$1I9qFUUnadQkOjigb6SKfrYEs2oegbm1kFVnTg0ZiRTNLhzV1NSz0jYDZYr4tpfGtc0jFKrzgZQoEjpyRprAW."
 
 # game client - "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}"
