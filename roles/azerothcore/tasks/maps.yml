@@ -47,12 +47,12 @@
 # DBC and Maps 
 - name: Extract DBC and Maps files
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/mapextractor
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 # Visual Maps
 - name: Extract Visual Maps
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/vmap4extractor
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Create Visual Maps folder
   file:
@@ -61,11 +61,11 @@
     mode: "0755"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Assemble Visual Maps
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/vmap4assembler Buildings vmaps
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 # Movement Maps
 - name: Create Movement Maps folder
@@ -75,11 +75,11 @@
     mode: "0755"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Extract Movement Maps files
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/mmaps_generator
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 #####################
 # Copy new files and cleanup
@@ -96,7 +96,7 @@
     - maps
     - mmaps
     - vmaps
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Clean up new map related folders
   file:
@@ -108,7 +108,7 @@
     - maps
     - mmaps
     - vmaps
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 #####################
 # Copy previous maps over since no changes where detected
@@ -125,4 +125,4 @@
     - mmaps
     - vmaps
     - vmaps
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'similar' )
+  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'similar' )) and azerothcore_tools == "false"

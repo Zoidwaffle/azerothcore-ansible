@@ -40,3 +40,6 @@ azerothcore_service: "enable"
 
 # the build to check out from Git
 azerothcore_version: "master"
+
+# compile tools (map-extraction etc.), 'true' or 'false'
+azerothcore_tools: "true"
