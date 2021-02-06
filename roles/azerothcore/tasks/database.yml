@@ -6,7 +6,7 @@
 - name: Database related scripts
   template:
     src: "sql/{{ item.file }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/database/"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}_backup/"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
     mode: "{{ item.mode }}"
@@ -44,7 +44,7 @@
 #####################
 
 - name: Backup databases
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/database/" && ./backup.sh
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_server }}_backup/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true
 
 #####################
