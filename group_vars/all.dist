@@ -38,6 +38,9 @@ azerothcore_realmlist_name: "My Realm"
 # enable server as a service (systemd), value can be "enable" or "disable"
 azerothcore_service: "enable"
 
+# where to get the source code from
+azerothcore_git: "git://github.com/AzerothCore/AzerothCore.git"
+
 # the build to check out from Git
 azerothcore_version: "master"
 

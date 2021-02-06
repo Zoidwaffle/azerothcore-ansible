@@ -5,7 +5,7 @@
 
 - name: Checkout AzerothCore code
   git:
-    repo: "git://github.com/AzerothCore/AzerothCore.git"
+    repo: "{{ azerothcore_git }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}"
     version: "{{ azerothcore_version }}"
   become_user: "{{ azerothcore_user }}"
