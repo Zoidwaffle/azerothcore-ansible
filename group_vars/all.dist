@@ -14,11 +14,11 @@ azerothcore_user_password: "$6$sWb.Lkqrq2SAGW$1I9qFUUnadQkOjigb6SKfrYEs2oegbm1kF
 azerothcore_wow_client: "wow_client"
 
 # source code - "/home/{{ azerothcore_user }}/{{ azerothcore_source }}"
-azerothcore_source: "azerothcore_source"
+azerothcore_source: "acore_source"
 
 # Server folder name - this will be used for the symlink to the current live version
 # as well as the reference name suffixed by the commit tag
-azerothcore_server: "azerothcore"
+azerothcore_server: "acore"
 
 # database information - for now only tested using "localhost"
 azerothcore_db_user: "azerothcore"
