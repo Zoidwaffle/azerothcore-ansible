@@ -107,18 +107,18 @@ screen -r worldserver
 This is the default structure and some important files with comments.
 ```
  .
- ├── azerothcore                   # This is a symlink to the latest build
- ├── azerothcore_b3a96             # Latest build (the hash suffix will change)
- │   ├── database                  # Folder with database tools and backups
- │   │   ├── backup.sh             # Backup all databases easily
- │   │   ├── create_databases.sql  # Create the user and databases needed
- │   │   └── drop_databases.sh     # Drop the databases and user (if recreating from scratch)
+ ├── acore                         # This is a symlink to the latest build
+ ├── acore_b3a96                   # Latest build (the hash suffix will change)
  │   └── server                    # The compiled server
  │       ├── bin                   # Main binaries
  │       ├── data                  # DBC and map-files
  │       ├── etc                   # Server configuration files
  │       └── log                   # Log files
- ├── azerothcore_source            # The source code
+ ├── acore_backup                  # Folder with database tools and backups
+ │   ├── backup.sh                 # Backup all databases easily
+ │   ├── create_databases.sql      # Create the user and databases needed
+ │   └── drop_databases.sh         # Drop the databases and user (if recreating from scratch)
+ ├── acore_source                  # The source code
  │   └── modules                   # Various modules
  └─── wow_client                   # The game client
 ```
