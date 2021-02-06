@@ -144,6 +144,12 @@
     - authserver.service
     - worldserver.service
   become: true
+  register: systemd_files
+
+- name: Reload services
+  systemd:
+    daemon_reload: yes
+  when: systemd_files.changed
 
 - name: Enable services
   systemd:
