@@ -20,7 +20,7 @@
 
 - name: Use last commit as name reference
   set_fact:
-    azerothcore_server_release: "{{ azerothcore_server }}_{{ git_commit_tag.stdout }}"
+    azerothcore_server_release: "{{ azerothcore_server }}_{{ azerothcore_branch }}_{{ git_commit_tag.stdout }}"
 
 # If this folder exists, we already compiled the current version...
 - name: Check if the current version is compiled already
