@@ -5,12 +5,12 @@ Description=AzerothCore Authentication Server
 
 [Service]
 Type=forking
-WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin
+WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin
 User={{ azerothcore_user }}
 
-ExecStart=/usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin/authserver
+ExecStart=/usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/authserver
 
-ExecReload=/usr/bin/killall -w -s 15 authserver; /usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin/authserver
+ExecReload=/usr/bin/killall -w -s 15 authserver; /usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/authserver
 
 ExecStop=/usr/bin/killall -w -s 15 authserver
 RestartSec=10s

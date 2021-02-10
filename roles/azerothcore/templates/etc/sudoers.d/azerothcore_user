@@ -7,3 +7,6 @@
 {{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl stop authserver
 {{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl reload authserver
 {{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl status authserver
+
+# In case the path is changed later on, reload is needed
+{{ azerothcore_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl daemon-reload

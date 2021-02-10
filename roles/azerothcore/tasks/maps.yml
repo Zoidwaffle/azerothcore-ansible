@@ -2,13 +2,13 @@
 # Is there an old build present
 - name: Check if former build is present
   stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}"
   register: former_build
 
 # Isn't there a better way? This is not an elegant solution but at best an indicator...
 # Compare the old tools with the new - if the same, no updates will be needed. This requires 'bash' and not the default 'sh'
 - name: Check if map-tools have been updated
-  shell: if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi
+  shell: if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_server }}/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi
   args:
     executable: /bin/bash
   register: map_files_diff
@@ -16,7 +16,7 @@
 
 - name: Create server data folder
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/data"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data"
     state: "directory"
     mode: "0755"
     owner: "{{ azerothcore_user }}"
@@ -29,7 +29,7 @@
 # Just in case some mess was left behind from earlier...
 - name: Clean up previous map related folders
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/{{ item }}"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/{{ item }}"
     state: "absent"
   with_items:
     - Buildings
@@ -46,17 +46,17 @@
 
 # DBC and Maps 
 - name: Extract DBC and Maps files
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/mapextractor
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/bin/mapextractor
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 # Visual Maps
 - name: Extract Visual Maps
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/vmap4extractor
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/bin/vmap4extractor
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Create Visual Maps folder
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/vmaps"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/vmaps"
     state: "directory"
     mode: "0755"
     owner: "{{ azerothcore_user }}"
@@ -64,13 +64,13 @@
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Assemble Visual Maps
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/vmap4assembler Buildings vmaps
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/bin/vmap4assembler Buildings vmaps
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 # Movement Maps
 - name: Create Movement Maps folder
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/mmaps"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/mmaps"
     state: "directory"
     mode: "0755"
     owner: "{{ azerothcore_user }}"
@@ -78,7 +78,7 @@
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 - name: Extract Movement Maps files
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/bin/mmaps_generator
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/bin/mmaps_generator
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "true"
 
 #####################
@@ -88,8 +88,8 @@
 # Moving is not supported by modules, so using copy and not shell commands
 - name: Copy new map related folders
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/{{ item }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/data/"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/{{ item }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/"
     remote_src: "yes"
   with_items:
     - dbc
@@ -100,7 +100,7 @@
 
 - name: Clean up new map related folders
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}/{{ item }}"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/{{ item }}"
     state: "absent"
   with_items:
     - Buildings
@@ -116,8 +116,8 @@
 
 - name: Copy old map related folders
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/data/{{ item }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/data/"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/{{ item }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/"
     remote_src: "yes"
   with_items:
     - dbc

@@ -6,7 +6,7 @@
 - name: Database related scripts
   template:
     src: "sql/{{ item.file }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}_backup/"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}_backup/"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
     mode: "{{ item.mode }}"
@@ -17,7 +17,7 @@
 
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
-  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/database/create_databases.sql"
+  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}_backup/create_databases.sql"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
   become: true
 
@@ -28,7 +28,7 @@
 - name: Custom SQL files
   template:
     src: "sql/{{ item.file }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/data/sql/custom/{{ item.destination }}/"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/data/sql/custom/{{ item.destination }}/"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
     mode: "{{ item.mode }}"
@@ -36,7 +36,7 @@
     - { file: "auth_custom.sql", destination: "db_auth", mode: "0644" }
 
 - name: Assemble & Import only bases
-  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 6"
+  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 6"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
 
 #####################
@@ -44,7 +44,7 @@
 #####################
 
 - name: Backup databases
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_server }}_backup/" && ./backup.sh
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}_backup/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true
 
 #####################
@@ -52,7 +52,7 @@
 #####################
 
 - name: Assemble & Import only updates & Assemble & Import only customs
-  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh {{ item }}"
+  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh {{ item }}"
   with_items:
     - 7
     - 8

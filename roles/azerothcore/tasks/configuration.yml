@@ -5,7 +5,7 @@
 
 - name: Create server log folder
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/log"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/log"
     state: "directory"
     mode: "0755"
     owner: "{{ azerothcore_user }}"
@@ -17,19 +17,19 @@
 
 - name: Check if previous server configuration exists
   stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/etc/"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
   register: previousserver_conf
 
 - name: Find all files present from previous server
-  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/etc/"
+  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
   register: previousserver_files
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 # Copy all old files, but don't overwrite any existing files
 - name: Copy all previous configuration files
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/etc/{{ item }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/{{ item }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/"
     force: "no" # This is important
     remote_src: "yes"
   with_items:
@@ -41,15 +41,15 @@
 #####################
 
 - name: Find all DBC files present from previous server
-  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/data/dbc/"
+  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/"
   register: dbc_files
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 # There might be custom DBC files, such as from the "mod-arac" module
 - name: Copy all previous non-existant DBC files
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/data/dbc/{{ item }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/data/dbc/"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/{{ item }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/dbc/"
     force: "no" # This is important
     remote_src: "yes"
   with_items:
@@ -62,19 +62,19 @@
 
 - name: Check if previous 'worldserver.conf' exists
   stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/etc/worldserver.conf"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/worldserver.conf"
   register: worldserver_conf
 
 - name: Copy new 'worldserver.conf'
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/worldserver.conf.dist"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/worldserver.conf"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf.dist"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
     remote_src: "yes"
   when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
 
 - name: Modify new 'worldserver.conf'
   lineinfile:
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/worldserver.conf"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
     regexp: "{{ item.regexmatch }}"
     line: "{{ item.insertstring }}"
   with_items:
@@ -87,19 +87,19 @@
 
 - name: Check if previous 'authserver.conf' exists
   stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server }}/server/etc/authserver.conf"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/authserver.conf"
   register: authserver_conf
 
 - name: Copy new 'authserver.conf'
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/authserver.conf.dist"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/authserver.conf"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf.dist"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
     remote_src: "yes"
   when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
 
 - name: Modify new 'authserver.conf'
   lineinfile:
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server/etc/authserver.conf"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
     regexp: "{{ item.regexmatch }}"
     line: "{{ item.insertstring }}"
   with_items:
@@ -113,13 +113,13 @@
 
 - name: Copy 'config.sh' from the source
   copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/conf/dist/config.sh"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/conf/"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/dist/config.sh"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/"
     remote_src: "yes"
 
 - name: Modify new 'config.sh'
   replace:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/conf/config.sh"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/config.sh"
     regexp: "{{ item.regexmatch }}"
     replace: "{{ item.replace }}"
   with_items:

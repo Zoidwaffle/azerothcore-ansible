@@ -7,7 +7,7 @@
 - name: Install package dependancies
   apt:
     name:
-      - clang
+      - clang-8 # clang7 is not supported
       - cmake
       - default-libmysqlclient-dev
       - g++
@@ -63,12 +63,12 @@
 
 - name: Check if the client folder exists
   stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}"
   register: client_folder
 
 - name: Notify of problems
   debug:
-    msg: "You need to place the client in folder '/home/{{ azerothcore_user }}/{{ azerothcore_wow_client }}'"
+    msg: "You need to place the client in folder '/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}'"
   when: client_folder.stat.exists == false
 
 #####################

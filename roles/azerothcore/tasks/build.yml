@@ -6,7 +6,7 @@
 - name: Checkout AzerothCore code
   git:
     repo: "{{ azerothcore_git }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
     version: "{{ azerothcore_version }}"
   become_user: "{{ azerothcore_user }}"
 
@@ -15,7 +15,7 @@
 #####################
 
 - name: Get the latest (short) Git commit tag
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}" && git rev-parse --short=6 $(git rev-parse HEAD)
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}" && git rev-parse --short=6 $(git rev-parse HEAD)
   register: git_commit_tag
 
 - name: Use last commit as name reference
@@ -25,7 +25,7 @@
 # If this folder exists, we already compiled the current version...
 - name: Check if the current version is compiled already
   stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}"
   register: release_folder
 
 - name: Information if we don't need to compile
@@ -42,7 +42,7 @@
 
 - name: Look for modules
   find:
-    paths: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/modules/"
+    paths: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/modules/"
     recurse: no
     file_type: directory
   register: modules_folder
@@ -59,12 +59,12 @@
 
 - name: Remove previous build folder
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build"
     state: "absent"
 
 - name: Create new build folder
   file:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build"
     mode: "0755"
     state: "directory"
     owner: "{{ azerothcore_user }}"
@@ -74,19 +74,19 @@
     msg: "azerothcore_tools: {{ azerothcore_tools }}"
 
 - name: Configure before compiling (without tools)
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server" -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DWITH_WARNINGS=1 -DTOOLS=0 -DSCRIPTS=1
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-8 -DWITH_WARNINGS=1 -DTOOLS=0 -DSCRIPTS=1
   when: azerothcore_tools == "false"
   become_user: "{{ azerothcore_user }}"
 
 - name: Configure before compiling (with tools)
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_server_release }}/server" -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-8 -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
   when: azerothcore_tools == "true"
   become_user: "{{ azerothcore_user }}"
 
 - name: Compile AzerothCore server
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make -j $(nproc)
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make -j $(nproc)
   become_user: "{{ azerothcore_user }}"
 
-- name: Install AzerothCore server to ~/{{ azerothcore_server_release }}/server
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_source }}/build" && make install
+- name: Install AzerothCore server
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make install
   become_user: "{{ azerothcore_user }}"
