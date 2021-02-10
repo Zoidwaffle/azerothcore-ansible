@@ -7,7 +7,7 @@
   git:
     repo: "{{ azerothcore_git }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
-    version: "{{ azerothcore_version }}"
+    version: "{{ azerothcore_branch }}"
   become_user: "{{ azerothcore_user }}"
 
 #####################
