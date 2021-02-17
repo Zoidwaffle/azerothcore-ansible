@@ -48,5 +48,5 @@ azerothcore_git: "git://github.com/AzerothCore/AzerothCore.git"
 # the build to check out from Git
 azerothcore_branch: "master"
 
-# compile tools (map-extraction etc.), 'true' or 'false'
-azerothcore_tools: "true"
+# compile tools (map-extraction etc.), '1' (true) or '0' (false)
+azerothcore_tools: "0"

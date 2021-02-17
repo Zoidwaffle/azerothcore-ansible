@@ -73,14 +73,8 @@
 - debug:
     msg: "azerothcore_tools: {{ azerothcore_tools }}"
 
-- name: Configure before compiling (without tools)
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-8 -DWITH_WARNINGS=1 -DTOOLS=0 -DSCRIPTS=1
-  when: azerothcore_tools == "false"
-  become_user: "{{ azerothcore_user }}"
-
-- name: Configure before compiling (with tools)
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-8 -DWITH_WARNINGS=1 -DTOOLS=1 -DSCRIPTS=1
-  when: azerothcore_tools == "true"
+- name: Configure before compiling
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-8 -DWITH_WARNINGS=1 -DTOOLS={{ azerothcore_tools }} -DSCRIPTS=1
   become_user: "{{ azerothcore_user }}"
 
 - name: Compile AzerothCore server
