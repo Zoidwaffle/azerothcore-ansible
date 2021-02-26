@@ -50,3 +50,6 @@ azerothcore_branch: "master"
 
 # compile tools (map-extraction etc.), '1' (true) or '0' (false)
 azerothcore_tools: "0"
+
+# enable debugging (recommended for development only), '1' (true) or '0' (false)
+azerothcore_debug: "0"
