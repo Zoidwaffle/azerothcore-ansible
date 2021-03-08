@@ -7,7 +7,7 @@
 - name: Install package dependancies
   apt:
     name:
-      - clang-8 # clang7 is not supported
+      - clang
       - cmake
       - default-libmysqlclient-dev
       - g++
