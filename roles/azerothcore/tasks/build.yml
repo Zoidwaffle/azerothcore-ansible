@@ -70,11 +70,9 @@
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
 
-- debug:
-    msg: "azerothcore_tools: {{ azerothcore_tools }}"
-
 - name: Configure before compiling
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-8 -DWITH_WARNINGS=1 -DTOOLS={{ azerothcore_tools }} -DSCRIPTS=1
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER=/usr/bin/clang-8 -DCMAKE_CXX_COMPILER={{ azerothcore_compiler }} -DWITH_WARNINGS=1 -DTOOLS={{ azerothcore_tools }} -DSCRIPTS=1 -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}
+
   become_user: "{{ azerothcore_user }}"
 
 - name: Compile AzerothCore server
