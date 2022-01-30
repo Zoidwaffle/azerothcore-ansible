@@ -4,11 +4,11 @@
 # Dependancies
 #####################
 
+# ./acore.sh install-deps
+
 - name: Install package dependancies
   apt:
     name:
-      - clang
-      - cmake
       - default-libmysqlclient-dev
       - g++
       - gcc
@@ -24,7 +24,27 @@
       - screen # for running the world- and authserver
       - sudo
       - unzip # for extra modules etc.
+      - libreadline8
+      - clang-11
+      - cmake
+      - build-essential
+      - libboost-all-dev
   become: true
+  when: ansible_os_family == 'Debian'
+
+    #- name: Install backported packages
+    #  apt:
+    #    name:
+    #    default_release: "{{ ansible_lsb.codename }}-backports"
+    #  become: true
+    #  when: ansible_os_family == 'Debian'
+
+#- name: Install testing packages
+#  apt:
+#    name:
+#      - libstdc++6
+#    default_release: "{{ ansible_lsb.codename }}-backports"
+#  become: true
 
 #####################
 # User for the project
@@ -60,6 +80,14 @@
 #####################
 # The game client location
 #####################
+
+- name: Create base folder
+  file:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}"
+    mode: "0755"
+    state: "directory"
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
 
 - name: Check if the client folder exists
   stat:
