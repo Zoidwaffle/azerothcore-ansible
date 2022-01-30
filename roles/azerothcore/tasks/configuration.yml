@@ -117,9 +117,9 @@
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/"
     remote_src: "yes"
 
-- name: Modify new 'config.sh'
+- name: Modify 'config.sh'
   replace:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/config.sh"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/dist/config.sh"
     regexp: "{{ item.regexmatch }}"
     replace: "{{ item.replace }}"
   with_items:
@@ -151,7 +151,7 @@
     daemon_reload: yes
   when: systemd_files.changed
 
-- name: Enable services
+- name: Enable systemd services
   systemd:
     enabled: "yes"
     name:
