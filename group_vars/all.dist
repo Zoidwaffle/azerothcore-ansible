@@ -45,6 +45,9 @@ azerothcore_service: "enable"
 # where to get the source code from
 azerothcore_git: "git://github.com/AzerothCore/AzerothCore.git"
 
+# discard changes to the repo, yes or no
+azerothcore_git_force: "yes"
+
 # the build to check out from Git
 azerothcore_branch: "master"
 
