@@ -8,7 +8,9 @@ Install and maintain AzerothCore easily using Ansible.
 
 For now it will only work using a local MySQL/MariaDB installation.
 
-This was initially created for Debian 10, but is now used for Ubuntu 20.04. It's likely it will work just fine for Ubuntu and other Debian-based distributions.
+This was initially created for Debian 10, but is now used for Ubuntu 20.04.
+
+It's likely it will work just fine for other new Debian-derived systems as well with minor modifications.
 
 ## Requirements
 
