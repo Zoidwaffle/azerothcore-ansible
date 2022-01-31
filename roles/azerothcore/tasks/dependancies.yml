@@ -9,26 +9,26 @@
 - name: Install package dependancies
   apt:
     name:
+      - build-essential
+      - clang-11
+      - cmake
       - default-libmysqlclient-dev
       - g++
       - gcc
       - git
       - libace-6.*
       - libace-dev
+      - libboost-all-dev
       - libbz2-dev
       - libncurses-dev
       - libreadline-dev
+      - libreadline8
       - libssl-dev
       - make
-      - mariadb-server
+      - mysql-server-8.0 # MariaDB is too old in 20.04
       - screen # for running the world- and authserver
       - sudo
       - unzip # for extra modules etc.
-      - libreadline8
-      - clang-11
-      - cmake
-      - build-essential
-      - libboost-all-dev
   become: true
   when: ansible_os_family == 'Debian'
 
