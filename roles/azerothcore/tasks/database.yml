@@ -6,7 +6,7 @@
 - name: Database related scripts
   template:
     src: "sql/{{ item.file }}"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}_backup/"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
     mode: "{{ item.mode }}"
@@ -17,7 +17,7 @@
 
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
-  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}_backup/create_databases.sql"
+  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/create_databases.sql"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
   become: true
 
@@ -44,7 +44,7 @@
 #####################
 
 - name: Backup databases
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}_backup/" && ./backup.sh
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true
 
 #####################

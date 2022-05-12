@@ -15,10 +15,10 @@ azerothcore_user_password: "$6$sWb.Lkqrq2SAGW$1I9qFUUnadQkOjigb6SKfrYEs2oegbm1kF
 azerothcore_folder: "azerothcore-wotlk"
 
 # game client - "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}"
-azerothcore_wow_client: "wow_client"
+azerothcore_wow_client: "client"
 
 # source code - "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
-azerothcore_source: "acore_source"
+azerothcore_source: "source"
 
 # Server folder name - this will be used for the symlink to the current live version
 # as well as the reference name suffixed by the commit tag
@@ -43,7 +43,7 @@ azerothcore_realmlist_name: "My Realm"
 azerothcore_service: "enable"
 
 # where to get the source code from
-azerothcore_git: "git://github.com/AzerothCore/AzerothCore.git"
+azerothcore_git: "https://github.com/azerothcore/azerothcore-wotlk.git"
 
 # discard changes to the repo, yes or no
 azerothcore_git_force: "yes"
