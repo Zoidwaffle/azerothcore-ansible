@@ -10,13 +10,10 @@
   apt:
     name:
       - build-essential
-      - clang-11
+      - clang-12
       - cmake
       - default-libmysqlclient-dev
-      - g++
-      - gcc
       - git
-      - libace-6.*
       - libace-dev
       - libboost-all-dev
       - libbz2-dev
@@ -25,26 +22,26 @@
       - libreadline8
       - libssl-dev
       - make
-      - mysql-server-8.0 # MariaDB is too old in 20.04
+      - mysql-server
       - screen # for running the world- and authserver
       - sudo
       - unzip # for extra modules etc.
   become: true
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian' 
 
-    #- name: Install backported packages
-    #  apt:
-    #    name:
-    #    default_release: "{{ ansible_lsb.codename }}-backports"
-    #  become: true
-    #  when: ansible_os_family == 'Debian'
+- name: Install package dependancies < 22.04
+  apt:
+    name:
+      - libace-6.*
+  become: true
+  when: ansible_os_family == 'Debian' and ansible_distribution_version < "22.04"
 
-#- name: Install testing packages
-#  apt:
-#    name:
-#      - libstdc++6
-#    default_release: "{{ ansible_lsb.codename }}-backports"
-#  become: true
+- name: Install package dependancies >= 22.04
+  apt:
+    name:
+      - libace-7.*
+  become: true
+  when: ansible_os_family == 'Debian' and ansible_distribution_version >= "22.04"
 
 #####################
 # User for the project
