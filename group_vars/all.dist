@@ -52,7 +52,11 @@ azerothcore_git_force: "yes"
 azerothcore_branch: "master"
 
 # compile tools (map-extraction etc.), '1' (true) or '0' (false)
-azerothcore_tools: "0"
+azerothcore_tools: "1"
 
 # enable debugging (recommended for development only), '1' (true) or '0' (false)
 azerothcore_debug: "0"
+
+# compiler to use, you can reference whatever you prefer
+azerothcore_compiler: "/usr/bin/clang"
+azerothcore_compiler_xx: "/usr/bin/clang++"
