@@ -10,7 +10,7 @@
   apt:
     name:
       - build-essential
-      - clang-12
+      - clang
       - cmake
       - default-libmysqlclient-dev
       - git
