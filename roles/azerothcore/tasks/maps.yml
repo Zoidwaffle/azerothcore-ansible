@@ -8,7 +8,7 @@
 # Isn't there a better way? This is not an elegant solution but at best an indicator...
 # Compare the old tools with the new - if the same, no updates will be needed. This requires 'bash' and not the default 'sh'
 - name: Check if map-tools have been updated
-  shell: if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi
+  shell: if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi
   args:
     executable: /bin/bash
   register: map_files_diff
@@ -16,7 +16,7 @@
 
 - debug:
     #msg: "map_files_diff: {{ map_files_diff.stdout }}"
-    msg: "if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,mapextractor,vmap4assembler,vmap4extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi"
+    msg: "if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi"
   when: map_files_diff.stdout is defined
 
 - name: Create server data folder
@@ -51,12 +51,12 @@
 
 # DBC and Maps 
 - name: Extract DBC and Maps files
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/mapextractor
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/map_extractor
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 # Visual Maps
 - name: Extract Visual Maps
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/vmap4extractor
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/vmap4_extractor
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Create Visual Maps folder
@@ -69,7 +69,7 @@
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Assemble Visual Maps
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/vmap4assembler Buildings vmaps
+  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/vmap4_assembler Buildings vmaps
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 # Movement Maps
