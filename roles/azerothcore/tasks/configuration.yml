@@ -36,6 +36,27 @@
     - "{{ previousserver_files.stdout_lines }}"
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
+- name: Check if previous module configuration exists
+  stat:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
+  register: previousmodule_conf
+
+- name: Find all files present from previous modules
+  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
+  register: previousmodule_files
+  when: previousmodule_conf.stat.exists is defined and previousmodule_conf.stat.exists == true
+
+# Copy all old files, but don't overwrite any existing files
+- name: Copy all previous module configuration files
+  copy:
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/{{ item }}"
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/modules/"
+    force: "no" # This is important
+    remote_src: "yes"
+  with_items:
+    - "{{ previousmodule_files.stdout_lines }}"
+  when: previousmodule_conf.stat.exists is defined and previousmodule_conf.stat.exists == true
+
 #####################
 # Existing DBC files
 #####################
