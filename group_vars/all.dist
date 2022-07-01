@@ -60,3 +60,7 @@ azerothcore_debug: "0"
 # compiler to use, you can reference whatever you prefer
 azerothcore_compiler: "/usr/bin/clang"
 azerothcore_compiler_xx: "/usr/bin/clang++"
+
+# cronjob for backup, multiple values can be listed such as "3,5,12" etc.
+azerothcore_cron_minute: "0"
+azerothcore_cron_hour: "7"

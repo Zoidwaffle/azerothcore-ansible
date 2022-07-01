@@ -101,3 +101,14 @@
     - "worldserver"
     - "authserver"
   become: yes
+
+#####################
+# Setup backup
+#####################
+
+- name: Setup backup using cron
+  cron:
+    name: Backup Azerothcore databases
+    minute: "{{ azerothcore_cron_minute }}"
+    hour: "{{ azerothcore_cron_hour }}"
+    job: "cd /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/ && ./backup.sh > /dev/null"
