@@ -112,3 +112,4 @@
     minute: "{{ azerothcore_cron_minute }}"
     hour: "{{ azerothcore_cron_hour }}"
     job: "cd /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/ && ./backup.sh > /dev/null"
+  when: azerothcore_cron_minute != "" or azerothcore_cron_hour != ""
