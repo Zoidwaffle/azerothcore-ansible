@@ -21,7 +21,7 @@ hline(){
 
 backup(){
   echo -n "Backing up database \"$1\": "
-  mysqldump "${1}" | gzip > "${DESTINATION}/${1}.${TIMESTAMP}.sql.gz" || echo "Failed"
+  mysqldump "${1}" --no-tablespaces | gzip > "${DESTINATION}/${1}.${TIMESTAMP}.sql.gz" || echo "Failed"
   echo "Done"
 }
 
