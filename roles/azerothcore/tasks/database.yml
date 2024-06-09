@@ -42,10 +42,3 @@
 - name: Backup databases
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true
-
-  ######################
-  ## Updating SQL after the backup
-  ######################
-  #
-  #- name: Assemble & Import all
-  #  shell: "bash /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/apps/db_assembler/db_assembler.sh 5"

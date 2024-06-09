@@ -86,3 +86,22 @@
 - name: Install AzerothCore server
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make install
   become_user: "{{ azerothcore_user }}"
+
+#####################
+# Add database file
+#####################
+
+- name: Create new tmp folder
+  file:
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/tmp"
+    mode: "0755"
+    state: "directory"
+    owner: "{{ azerothcore_user }}"
+    group: "{{ azerothcore_user }}"
+
+- name: Add file for MySQL
+  copy:
+    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/tmp/mysql_ac.conf"
+    content: |
+      [client]
+      password = "{{ azerothcore_db_password }}"
