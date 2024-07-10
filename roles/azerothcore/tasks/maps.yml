@@ -31,6 +31,10 @@
 # Create new maps
 #####################
 
+- name: Maps register start
+  set_fact:
+    maps_start: "{{ now() }}"
+
 # Just in case some mess was left behind from earlier...
 - name: Clean up previous map related folders
   file:
@@ -85,6 +89,14 @@
 - name: Extract Movement Maps files
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/mmaps_generator
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+
+- name: Maps register end
+  set_fact:
+    maps_end: "{{ now() }}"
+
+- name: Print execution time
+  debug:
+    msg: "Long operation start: {{ maps_start }}, end: {{ maps_end }}"
 
 #####################
 # Copy new files and cleanup
