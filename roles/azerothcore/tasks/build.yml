@@ -79,9 +79,22 @@
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DMODULES_STATIC=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}
   become_user: "{{ azerothcore_user }}"
 
+- name: Compiling register start
+  set_fact:
+    compile_start: "{{ now() }}"
+
 - name: Compile AzerothCore server
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make -j $(nproc)
   become_user: "{{ azerothcore_user }}"
+
+- name: Compiling register end
+  set_fact:
+    compile_end: "{{ now() }}"
+
+- name: Print execution time
+  debug:
+    msg: "Long operation start: {{ compile_start }}, end: {{ compile_end }}"
+
 
 - name: Install AzerothCore server
   shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make install
