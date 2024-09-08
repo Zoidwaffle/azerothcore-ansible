@@ -1,5 +1,4 @@
 ---
-
 #####################
 # Dependancies
 #####################
@@ -28,13 +27,6 @@
       - unzip # for extra modules etc.
   become: true
   when: ansible_os_family == 'Debian' 
-
-- name: Install package dependancies < 22.04
-  apt:
-    name:
-      - libace-6.*
-  become: true
-  when: ansible_os_family == 'Debian' and ansible_distribution_version < "22.04"
 
 - name: Install package dependancies >= 22.04
   apt:
