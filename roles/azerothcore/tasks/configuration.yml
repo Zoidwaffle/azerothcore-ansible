@@ -4,7 +4,7 @@
 #####################
 
 - name: Create server log folder
-  file:
+  ansible.builtin.file:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/log"
     state: "directory"
     mode: "0755"
@@ -16,18 +16,18 @@
 #####################
 
 - name: Check if previous server configuration exists
-  stat:
+  ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
   register: previousserver_conf
 
 - name: Find all files present from previous server
-  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
+  ansible.builtin.shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
   register: previousserver_files
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 # Copy all old files, but don't overwrite any existing files
 - name: Copy all previous configuration files
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/"
     force: "no" # This is important
@@ -37,18 +37,18 @@
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 - name: Check if previous module configuration exists
-  stat:
+  ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
   register: previousmodule_conf
 
 - name: Find all files present from previous modules
-  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
+  ansible.builtin.shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
   register: previousmodule_files
   when: previousmodule_conf.stat.exists is defined and previousmodule_conf.stat.exists == true
 
 # Copy all old files, but don't overwrite any existing files
 - name: Copy all previous module configuration files
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/modules/"
     force: "no" # This is important
@@ -62,13 +62,13 @@
 #####################
 
 - name: Find all DBC files present from previous server
-  shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/"
+  ansible.builtin.shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/"
   register: dbc_files
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
 
 # There might be custom DBC files, such as from the "mod-arac" module
 - name: Copy all previous non-existant DBC files
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/dbc/"
     force: "no" # This is important
@@ -82,19 +82,19 @@
 #####################
 
 - name: Check if previous 'worldserver.conf' exists
-  stat:
+  ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/worldserver.conf"
   register: worldserver_conf
 
 - name: Copy new 'worldserver.conf'
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
     remote_src: "yes"
   when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
 
 - name: Modify new 'worldserver.conf'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
     regexp: "{{ item.regexmatch }}"
     line: "{{ item.insertstring }}"
@@ -107,19 +107,19 @@
   when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
 
 - name: Check if previous 'authserver.conf' exists
-  stat:
+  ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/authserver.conf"
   register: authserver_conf
 
 - name: Copy new 'authserver.conf'
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
     remote_src: "yes"
   when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
 
 - name: Modify new 'authserver.conf'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
     regexp: "{{ item.regexmatch }}"
     line: "{{ item.insertstring }}"
@@ -143,13 +143,13 @@
 #####################
 
 - name: Copy 'config.sh' from the source
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/dist/config.sh"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/"
     remote_src: "yes"
 
 - name: Modify 'config.sh'
-  replace:
+  ansible.builtin.replace:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/dist/config.sh"
     regexp: "{{ item.regexmatch }}"
     replace: "{{ item.replace }}"
@@ -166,7 +166,7 @@
 #####################
 
 - name: Copy systemd files for easy stop/start/restart
-  template:
+  ansible.builtin.template:
     src: "etc/systemd/system/{{ item }}"
     dest: "/etc/systemd/system/{{ item }}"
     owner: "root"
@@ -178,7 +178,7 @@
   register: systemd_files
 
 - name: Enable systemd services
-  systemd:
+  ansible.builtin.systemd:
     enabled: "yes"
     name:
       - authserver

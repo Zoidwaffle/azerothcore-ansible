@@ -4,7 +4,7 @@
 #####################
 
 - name: Database related scripts
-  template:
+  ansible.builtin.template:
     src: "sql/{{ item.file }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/"
     owner: "{{ azerothcore_user }}"
@@ -17,7 +17,7 @@
 
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
-  shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/create_databases.sql"
+  ansible.builtin.shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/create_databases.sql"
   when: former_build.stat.exists is defined and former_build.stat.exists == false
   become: true
 
@@ -26,7 +26,7 @@
 #####################
 
 - name: Custom SQL files
-  template:
+  ansible.builtin.template:
     src: "sql/{{ item.file }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/data/sql/custom/{{ item.destination }}/"
     owner: "{{ azerothcore_user }}"
@@ -40,5 +40,5 @@
 #####################
 
 - name: Backup databases
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/" && ./backup.sh
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/" && ./backup.sh
   when: former_build.stat.exists is defined and former_build.stat.exists == true

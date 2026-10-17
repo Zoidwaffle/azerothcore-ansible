@@ -4,18 +4,18 @@
 #####################
 
 - name: Check for configuration file
-  stat:
+  ansible.builtin.stat:
     path: "group_vars/all"
   changed_when: False
   delegate_to: localhost
   register: local_settings
 
 - name: The file './group_vars/all' must exist
-  debug:
+  ansible.builtin.debug:
     msg: "Please copy './group_vars/all.dist' -> ./group_vars/all' and modify it"
   when: local_settings.stat is defined and local_settings.stat.exists == false
 
-- meta: end_play
+- ansible.builtin.meta: end_play
   when: local_settings.stat is defined and local_settings.stat.exists == false
 
 #####################
@@ -23,7 +23,7 @@
 #####################
 
 - name: Write ansible log
-  shell: date "+{{ ansible_log_date_format }} - azerothcore" >> "{{ ansible_log_file }}"
+  ansible.builtin.shell: date "+{{ ansible_log_date_format }} - azerothcore" >> "{{ ansible_log_file }}"
   changed_when: False
   become: true
 
@@ -32,28 +32,28 @@
 #####################
 
 - name: Include task for dependancies
-  include_tasks: "tasks/dependancies.yml"
+  ansible.builtin.include_tasks: "tasks/dependancies.yml"
 
 #####################
 # Source code and build
 #####################
 
 - name: Include task for building
-  include_tasks: "tasks/build.yml"
+  ansible.builtin.include_tasks: "tasks/build.yml"
 
 #####################
 # Handle maps
 #####################
 
 - name: Include task for maps
-  include_tasks: "tasks/maps.yml"
+  ansible.builtin.include_tasks: "tasks/maps.yml"
 
 #####################
 # Configuration files
 #####################
 
 - name: Include task for configuration
-  include_tasks: "tasks/configuration.yml"
+  ansible.builtin.include_tasks: "tasks/configuration.yml"
 
 #####################
 # Stop old server
@@ -61,7 +61,7 @@
 
 # Stop before the database dumps etc. below
 - name: Stop world- and authserver
-  systemd:
+  ansible.builtin.systemd:
     state: stopped
     name: "{{ item }}"
   with_items:
@@ -74,7 +74,7 @@
 #####################
 
 - name: Include task for database
-  include_tasks: "tasks/database.yml"
+  ansible.builtin.include_tasks: "tasks/database.yml"
 
 #####################
 # Symlink new build
@@ -82,7 +82,7 @@
 
 # Ownership doesn't seem to work?
 - name: Update symlink to the latest release
-  file:
+  ansible.builtin.file:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}"
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}"
     state: link
@@ -94,7 +94,7 @@
 #####################
 
 - name: Start world- and authserver
-  systemd:
+  ansible.builtin.systemd:
     state: started
     name: "{{ item }}"
   with_items:
@@ -107,7 +107,7 @@
 #####################
 
 - name: Setup backup using cron
-  cron:
+  ansible.builtin.cron:
     name: Backup Azerothcore databases
     minute: "{{ azerothcore_cron_minute }}"
     hour: "{{ azerothcore_cron_hour }}"

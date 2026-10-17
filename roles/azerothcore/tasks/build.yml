@@ -4,7 +4,7 @@
 #####################
 
 - name: Checkout AzerothCore code
-  git:
+  ansible.builtin.git:
     repo: "{{ azerothcore_git }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
     version: "{{ azerothcore_branch }}"
@@ -16,25 +16,25 @@
 #####################
 
 - name: Get the latest (short) Git commit tag
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}" && git rev-parse --short=6 $(git rev-parse HEAD)
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}" && git rev-parse --short=6 $(git rev-parse HEAD)
   register: git_commit_tag
 
 - name: Use last commit as name reference
-  set_fact:
+  ansible.builtin.set_fact:
     azerothcore_server_release: "{{ azerothcore_server }}_{{ azerothcore_branch }}_{{ git_commit_tag.stdout }}"
 
 # If this folder exists, we already compiled the current version...
 - name: Check if the current version is compiled already
-  stat:
+  ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}"
   register: release_folder
 
 - name: Information if we don't need to compile
-  debug:
+  ansible.builtin.debug:
     msg: "Server for release {{ git_commit_tag.stdout }} already exists, will exit"
   when: release_folder.stat.exists
 
-- meta: end_play
+- ansible.builtin.meta: end_play
   when: release_folder.stat.exists
 
 #####################
@@ -42,14 +42,14 @@
 #####################
 
 - name: Look for modules
-  find:
+  ansible.builtin.find:
     paths: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/modules/"
     recurse: no
     file_type: directory
   register: modules_folder
 
 - name: Update modules
-  shell: cd "{{ item.path }}" && git pull
+  ansible.builtin.shell: cd "{{ item.path }}" && git pull
   with_items:
     - "{{ modules_folder.files }}"
   when: modules_folder is defined and modules_folder != ""
@@ -59,12 +59,12 @@
 #####################
 
 - name: Remove previous build folder
-  file:
+  ansible.builtin.file:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build"
     state: "absent"
 
 - name: Create new build folder
-  file:
+  ansible.builtin.file:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build"
     mode: "0755"
     state: "directory"
@@ -72,32 +72,32 @@
     group: "{{ azerothcore_user }}"
 
 - name: Debug - configure before compiling
-  debug:
+  ansible.builtin.debug:
     msg: 'cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}'
 
 - name: Configure before compiling
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DMODULES_STATIC=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DMODULES_STATIC=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}
   become_user: "{{ azerothcore_user }}"
 
 - name: Compiling register start
-  set_fact:
+  ansible.builtin.set_fact:
     compile_start: "{{ now() }}"
 
 - name: Compile AzerothCore server
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make -j $(nproc)
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make -j $(nproc)
   become_user: "{{ azerothcore_user }}"
 
 - name: Compiling register end
-  set_fact:
+  ansible.builtin.set_fact:
     compile_end: "{{ now() }}"
 
 - name: Print execution time
-  debug:
+  ansible.builtin.debug:
     msg: "Long operation start: {{ compile_start }}, end: {{ compile_end }}"
 
 
 - name: Install AzerothCore server
-  shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make install
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make install
   become_user: "{{ azerothcore_user }}"
 
 #####################
@@ -105,7 +105,7 @@
 #####################
 
 - name: Create new tmp folder
-  file:
+  ansible.builtin.file:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/tmp"
     mode: "0755"
     state: "directory"
@@ -113,7 +113,7 @@
     group: "{{ azerothcore_user }}"
 
 - name: Add file for MySQL
-  copy:
+  ansible.builtin.copy:
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/tmp/mysql_ac.conf"
     content: |
       [client]
