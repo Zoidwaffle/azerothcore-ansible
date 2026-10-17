@@ -15,7 +15,7 @@
   when: former_build.stat.islnk is defined and former_build.stat.islnk
 
 - ansible.builtin.debug:
-    #msg: "map_files_diff: {{ map_files_diff.stdout }}"
+    # msg: "map_files_diff: {{ map_files_diff.stdout }}"
     msg: "if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi"
   when: map_files_diff.stdout is defined
 
@@ -53,7 +53,7 @@
     msg: "New maps etc. will be created, be patient, this will take a while!"
   when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
 
-# DBC and Maps 
+# DBC and Maps
 - name: Extract DBC and Maps files
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/map_extractor
   when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
