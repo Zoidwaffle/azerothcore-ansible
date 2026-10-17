@@ -30,8 +30,8 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/"
-    force: "no" # This is important
-    remote_src: "yes"
+    force: false # This is important
+    remote_src: true
   with_items:
     - "{{ previousserver_files.stdout_lines }}"
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
@@ -51,8 +51,8 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/modules/"
-    force: "no" # This is important
-    remote_src: "yes"
+    force: false # This is important
+    remote_src: true
   with_items:
     - "{{ previousmodule_files.stdout_lines }}"
   when: previousmodule_conf.stat.exists is defined and previousmodule_conf.stat.exists == true
@@ -71,8 +71,8 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/dbc/"
-    force: "no" # This is important
-    remote_src: "yes"
+    force: false # This is important
+    remote_src: true
   with_items:
     - "{{ dbc_files.stdout_lines }}"
   when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
@@ -90,7 +90,7 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
-    remote_src: "yes"
+    remote_src: true
   when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
 
 - name: Modify new 'worldserver.conf'
@@ -115,7 +115,7 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
-    remote_src: "yes"
+    remote_src: true
   when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
 
 - name: Modify new 'authserver.conf'
@@ -131,8 +131,8 @@
 - name: Enable auth- and worldserver services
   ansible.builtin.systemd:
     name: "{{ item }}"
-    enabled: yes
-    masked: no
+    enabled: true
+    masked: false
   with_items:
     - "worldserver"
     - "authserver"
@@ -146,7 +146,7 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/dist/config.sh"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/"
-    remote_src: "yes"
+    remote_src: true
 
 - name: Modify 'config.sh'
   ansible.builtin.replace:
@@ -179,7 +179,7 @@
 
 - name: Enable systemd services
   ansible.builtin.systemd:
-    enabled: "yes"
+    enabled: true
     name:
       - authserver
       - worldserver

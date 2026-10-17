@@ -6,7 +6,7 @@
 - name: Check for configuration file
   ansible.builtin.stat:
     path: "group_vars/all"
-  changed_when: False
+  changed_when: false
   delegate_to: localhost
   register: local_settings
 
@@ -24,7 +24,7 @@
 
 - name: Write ansible log
   ansible.builtin.shell: date "+{{ ansible_log_date_format }} - azerothcore" >> "{{ ansible_log_file }}"
-  changed_when: False
+  changed_when: false
   become: true
 
 #####################
@@ -67,7 +67,7 @@
   with_items:
     - "worldserver"
     - "authserver"
-  become: yes
+  become: true
 
 #####################
 # Database
@@ -100,7 +100,7 @@
   with_items:
     - "worldserver"
     - "authserver"
-  become: yes
+  become: true
 
 #####################
 # Setup backup

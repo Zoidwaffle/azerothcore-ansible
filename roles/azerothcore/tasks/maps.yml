@@ -107,7 +107,7 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/"
-    remote_src: "yes"
+    remote_src: true
   with_items:
     - dbc
     - maps
@@ -135,7 +135,7 @@
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/"
-    remote_src: "yes"
+    remote_src: true
   with_items:
     - dbc
     - maps

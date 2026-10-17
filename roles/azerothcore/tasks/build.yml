@@ -44,7 +44,7 @@
 - name: Look for modules
   ansible.builtin.find:
     paths: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/modules/"
-    recurse: no
+    recurse: false
     file_type: directory
   register: modules_folder
 
