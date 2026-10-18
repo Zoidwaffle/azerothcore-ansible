@@ -9,6 +9,7 @@
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
     version: "{{ azerothcore_branch }}"
     force: "{{ azerothcore_git_force }}"
+  become: true
   become_user: "{{ azerothcore_user }}"
 
 #####################
@@ -73,10 +74,11 @@
 
 - name: Debug - configure before compiling
   ansible.builtin.debug:
-    msg: 'cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}'
+    msg: 'cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -G Ninja -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}'
 
 - name: Configure before compiling
-  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DMODULES_STATIC=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && cmake ../ -G Ninja -DCMAKE_INSTALL_PREFIX="/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}" -DCMAKE_C_COMPILER={{ azerothcore_compiler }} -DCMAKE_CXX_COMPILER={{ azerothcore_compiler_xx }} -DWITH_WARNINGS=1 -DTOOLS_BUILD={{ azerothcore_tools }} -DSCRIPTS=static -DMODULES_STATIC=static -DENABLE_EXTRAS={{ azerothcore_debug }} -DENABLE_EXTRA_LOGS={{ azerothcore_debug }}
+  become: true
   become_user: "{{ azerothcore_user }}"
 
 - name: Compiling register start
@@ -84,7 +86,10 @@
     compile_start: "{{ now() }}"
 
 - name: Compile AzerothCore server
-  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make -j $(nproc)
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && ninja
+  async: 7200
+  poll: 15
+  become: true
   become_user: "{{ azerothcore_user }}"
 
 - name: Compiling register end
@@ -95,9 +100,9 @@
   ansible.builtin.debug:
     msg: "Long operation start: {{ compile_start }}, end: {{ compile_end }}"
 
-
 - name: Install AzerothCore server
-  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && make install
+  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && ninja install
+  become: true
   become_user: "{{ azerothcore_user }}"
 
 #####################
