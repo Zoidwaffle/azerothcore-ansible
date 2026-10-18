@@ -54,6 +54,9 @@ azerothcore_branch: "master"
 # compile tools (map-extraction etc.), '1' (true) or '0' (false)
 azerothcore_tools: "1"
 
+# force re-extraction of maps even if extraction tools have not changed, 'yes' or 'no'
+# azerothcore_force_maps: "no"
+
 # enable debugging (recommended for development only), '1' (true) or '0' (false)
 azerothcore_debug: "0"
 
