@@ -67,27 +67,16 @@
 
 - name: Check if previous LUA exists
   ansible.builtin.stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/lua_scripts/"
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/lua_scripts"
   register: azerothcore_previouslua
 
-- name: Find all files present from previous LUA
-  ansible.builtin.find:
-    paths: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/lua_scripts"
-    file_type: file
-    recurse: false
-  register: azerothcore_previousmodule_files
-  when: azerothcore_previouslua.stat.exists is defined and azerothcore_previouslua.stat.exists
-
-# Copy all old files, but don't overwrite any existing files
-- name: Copy all previous LUA files
+# Copy all old files and subfolders
+- name: Copy all previous LUA files and subfolders
   ansible.builtin.copy:
-    src: "{{ item.path }}"
+    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/lua_scripts/"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/lua_scripts/"
-    force: false # This is important
     remote_src: true
     mode: "preserve"
-  with_items:
-    - "{{ azerothcore_previousmodule_files.files }}"
   when: azerothcore_previouslua.stat.exists is defined and azerothcore_previouslua.stat.exists
 
 #####################
