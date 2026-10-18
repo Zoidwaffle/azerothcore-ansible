@@ -1,0 +1,28 @@
+---
+- name: Wait 30 seconds
+  ansible.builtin.pause:
+    seconds: 30
+
+- name: Check compilation process status
+  ansible.builtin.async_status:
+    jid: "{{ azerothcore_compile_job.ansible_job_id }}"
+  register: azerothcore_compile_status
+  failed_when: false
+  become: true
+  become_user: "{{ azerothcore_user }}"
+
+- name: Read last line of compile log
+  ansible.builtin.command: tail -n 1 "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build/compile.log"
+  register: azerothcore_compile_progress
+  changed_when: false
+  failed_when: false
+  become: true
+  become_user: "{{ azerothcore_user }}"
+
+- name: Compilation progress
+  ansible.builtin.debug:
+    msg: "{{ azerothcore_compile_progress.stdout | default('Compiling...', true) }}"
+
+- name: Continue monitoring while compilation is active
+  ansible.builtin.include_tasks: "tasks/monitor_compile.yml"
+  when: not (azerothcore_compile_status.finished | default(false))
