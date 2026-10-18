@@ -5,40 +5,49 @@
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}"
   register: azerothcore_former_build
 
-# Detect if the map tools source code in Git was modified
-- name: Get last commit that modified map tools
-  ansible.builtin.command:
-    cmd: git log -1 --format="%H" -- src/tools/
-    chdir: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
-  register: azerothcore_tools_commit
-  changed_when: false
-
-- name: Check if previous map tools stamp file exists
+- name: Check if former build has extracted maps
   ansible.builtin.stat:
-    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/.map_tools_version"
-  register: azerothcore_previous_map_tools_stamp_stat
-  when: azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists
+    path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/maps"
+  register: azerothcore_former_maps
+  when: azerothcore_former_build.stat.exists | default(false)
 
-- name: Read previous map tools stamp file
-  ansible.builtin.slurp:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/.map_tools_version"
-  register: azerothcore_previous_map_tools_stamp
-  when: azerothcore_previous_map_tools_stamp_stat.stat.exists is defined and azerothcore_previous_map_tools_stamp_stat.stat.exists
+- name: Extract commit tag from former build symlink target
+  ansible.builtin.set_fact:
+    azerothcore_former_commit: >-
+      {{ ((azerothcore_former_build.stat.lnk_source | default(azerothcore_former_build.stat.lnk_target | default(''))) | basename).split('_')[-1] }}
+  when:
+    - azerothcore_former_build.stat.exists | default(false)
+    - azerothcore_former_build.stat.islnk | default(false)
+    - azerothcore_former_maps.stat.exists | default(false)
+
+- name: Check if map tools were modified since previous build
+  ansible.builtin.command:
+    cmd: "git diff --quiet {{ azerothcore_former_commit }} HEAD -- src/tools/"
+    chdir: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}"
+  register: azerothcore_tools_diff
+  changed_when: false
+  failed_when: false
+  when: azerothcore_former_commit is defined and azerothcore_former_commit != ""
+  # Git diff is used directly as ansible.builtin.git has no diff functionality
+  tags:
+    - skip_ansible_lint
 
 - name: Evaluate if map extraction is needed
   ansible.builtin.set_fact:
     azerothcore_maps_need_rebuild: >-
       {{
         (azerothcore_force_maps | default(false) | bool) or
-        not (azerothcore_former_build.stat.exists | default(false)) or
-        not (azerothcore_previous_map_tools_stamp_stat.stat.exists | default(false)) or
-        (azerothcore_previous_map_tools_stamp is defined and
-         (azerothcore_previous_map_tools_stamp.content | b64decode | trim) != (azerothcore_tools_commit.stdout | trim))
+        not (azerothcore_former_maps.stat.exists | default(false)) or
+        (azerothcore_tools_diff.rc is not defined) or
+        (azerothcore_tools_diff.rc != 0)
       }}
 
 - name: Debug map tools change detection status
   ansible.builtin.debug:
-    msg: "Map extraction needed: {{ azerothcore_maps_need_rebuild }} (tools commit: {{ azerothcore_tools_commit.stdout }})"
+    msg: >-
+      Map extraction needed: {{ azerothcore_maps_need_rebuild }}
+      (former commit: {{ azerothcore_former_commit | default('none') }},
+      git diff rc: {{ azerothcore_tools_diff.rc | default('n/a') }})
 
 - name: Create server data folder
   ansible.builtin.file:
@@ -140,14 +149,6 @@
     - vmaps
   when: azerothcore_maps_need_rebuild and (azerothcore_tools == "all" or azerothcore_tools == "1")
 
-- name: Record map tools commit version in data folder
-  ansible.builtin.copy:
-    content: "{{ azerothcore_tools_commit.stdout }}\n"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/.map_tools_version"
-    owner: "{{ azerothcore_user }}"
-    group: "{{ azerothcore_user }}"
-    mode: "0644"
-  when: azerothcore_maps_need_rebuild and (azerothcore_tools == "all" or azerothcore_tools == "1")
 
 - name: Clean up new map related folders
   ansible.builtin.file:
@@ -178,13 +179,3 @@
     - vmaps
   when: not azerothcore_maps_need_rebuild or (azerothcore_tools != "all" and azerothcore_tools != "1")
 
-- name: Copy old map tools version stamp
-  ansible.builtin.copy:
-    src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/.map_tools_version"
-    dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/.map_tools_version"
-    remote_src: true
-    mode: "preserve"
-  when:
-    - not azerothcore_maps_need_rebuild
-    - azerothcore_previous_map_tools_stamp_stat.stat.exists is defined
-    - azerothcore_previous_map_tools_stamp_stat.stat.exists
