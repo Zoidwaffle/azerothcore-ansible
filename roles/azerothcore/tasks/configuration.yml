@@ -18,12 +18,12 @@
 - name: Check if previous server configuration exists
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
-  register: previousserver_conf
+  register: azerothcore_previousserver_conf
 
 - name: Find all files present from previous server
   ansible.builtin.shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/"
-  register: previousserver_files
-  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+  register: azerothcore_previousserver_files
+  when: azerothcore_previousserver_conf.stat.exists is defined and azerothcore_previousserver_conf.stat.exists == true
 
 # Copy all old files, but don't overwrite any existing files
 - name: Copy all previous configuration files
@@ -33,18 +33,18 @@
     force: false # This is important
     remote_src: true
   with_items:
-    - "{{ previousserver_files.stdout_lines }}"
-  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+    - "{{ azerothcore_previousserver_files.stdout_lines }}"
+  when: azerothcore_previousserver_conf.stat.exists is defined and azerothcore_previousserver_conf.stat.exists == true
 
 - name: Check if previous module configuration exists
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
-  register: previousmodule_conf
+  register: azerothcore_previousmodule_conf
 
 - name: Find all files present from previous modules
   ansible.builtin.shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/modules/"
-  register: previousmodule_files
-  when: previousmodule_conf.stat.exists is defined and previousmodule_conf.stat.exists == true
+  register: azerothcore_previousmodule_files
+  when: azerothcore_previousmodule_conf.stat.exists is defined and azerothcore_previousmodule_conf.stat.exists == true
 
 # Copy all old files, but don't overwrite any existing files
 - name: Copy all previous module configuration files
@@ -54,8 +54,8 @@
     force: false # This is important
     remote_src: true
   with_items:
-    - "{{ previousmodule_files.stdout_lines }}"
-  when: previousmodule_conf.stat.exists is defined and previousmodule_conf.stat.exists == true
+    - "{{ azerothcore_previousmodule_files.stdout_lines }}"
+  when: azerothcore_previousmodule_conf.stat.exists is defined and azerothcore_previousmodule_conf.stat.exists == true
 
 #####################
 # Existing DBC files
@@ -63,8 +63,8 @@
 
 - name: Find all DBC files present from previous server
   ansible.builtin.shell: ls "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/dbc/"
-  register: dbc_files
-  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+  register: azerothcore_dbc_files
+  when: azerothcore_previousserver_conf.stat.exists is defined and azerothcore_previousserver_conf.stat.exists == true
 
 # There might be custom DBC files, such as from the "mod-arac" module
 - name: Copy all previous non-existant DBC files
@@ -74,8 +74,8 @@
     force: false # This is important
     remote_src: true
   with_items:
-    - "{{ dbc_files.stdout_lines }}"
-  when: previousserver_conf.stat.exists is defined and previousserver_conf.stat.exists == true
+    - "{{ azerothcore_dbc_files.stdout_lines }}"
+  when: azerothcore_previousserver_conf.stat.exists is defined and azerothcore_previousserver_conf.stat.exists == true
 
 #####################
 # New configuration files
@@ -84,14 +84,14 @@
 - name: Check if previous 'worldserver.conf' exists
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/worldserver.conf"
-  register: worldserver_conf
+  register: azerothcore_worldserver_conf
 
 - name: Copy new 'worldserver.conf'
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
     remote_src: true
-  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
+  when: azerothcore_worldserver_conf.stat.exists is defined and azerothcore_worldserver_conf.stat.exists == false
 
 - name: Modify new 'worldserver.conf'
   ansible.builtin.lineinfile:
@@ -104,19 +104,19 @@
     - { regexmatch: '^LoginDatabaseInfo ', insertstring: 'LoginDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_auth }}"' }
     - { regexmatch: '^WorldDatabaseInfo ', insertstring: 'WorldDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_world }}"' }
     - { regexmatch: '^CharacterDatabaseInfo ', insertstring: 'CharacterDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_characters }}"' }
-  when: worldserver_conf.stat.exists is defined and worldserver_conf.stat.exists == false
+  when: azerothcore_worldserver_conf.stat.exists is defined and azerothcore_worldserver_conf.stat.exists == false
 
 - name: Check if previous 'authserver.conf' exists
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/etc/authserver.conf"
-  register: authserver_conf
+  register: azerothcore_authserver_conf
 
 - name: Copy new 'authserver.conf'
   ansible.builtin.copy:
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
     remote_src: true
-  when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
+  when: azerothcore_authserver_conf.stat.exists is defined and azerothcore_authserver_conf.stat.exists == false
 
 - name: Modify new 'authserver.conf'
   ansible.builtin.lineinfile:
@@ -126,7 +126,7 @@
   with_items:
     - { regexmatch: '^LoginDatabaseInfo ', insertstring: 'LoginDatabaseInfo = "{{ azerothcore_db_server }};3306;{{ azerothcore_db_user }};{{ azerothcore_db_password }};{{ azerothcore_db_auth }}"' }
     - { regexmatch: '^LogsDir =', insertstring: 'LogsDir = "../log"' }
-  when: authserver_conf.stat.exists is defined and authserver_conf.stat.exists == false
+  when: azerothcore_authserver_conf.stat.exists is defined and azerothcore_authserver_conf.stat.exists == false
 
 - name: Enable auth- and worldserver services
   ansible.builtin.systemd:
@@ -175,7 +175,7 @@
     - authserver.service
     - worldserver.service
   become: true
-  register: systemd_files
+  register: azerothcore_systemd_files
 
 - name: Enable systemd services
   ansible.builtin.systemd:

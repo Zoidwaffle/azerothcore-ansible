@@ -8,15 +8,15 @@
     path: "group_vars/all"
   changed_when: false
   delegate_to: localhost
-  register: local_settings
+  register: azerothcore_local_settings
 
 - name: The file './group_vars/all' must exist
   ansible.builtin.debug:
     msg: "Please copy './group_vars/all.dist' -> ./group_vars/all' and modify it"
-  when: local_settings.stat is defined and local_settings.stat.exists == false
+  when: azerothcore_local_settings.stat is defined and azerothcore_local_settings.stat.exists == false
 
 - ansible.builtin.meta: end_play
-  when: local_settings.stat is defined and local_settings.stat.exists == false
+  when: azerothcore_local_settings.stat is defined and azerothcore_local_settings.stat.exists == false
 
 #####################
 # Log we started the role

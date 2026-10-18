@@ -18,25 +18,25 @@
 
 - name: Get the latest (short) Git commit tag
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}" && git rev-parse --short=6 $(git rev-parse HEAD)
-  register: git_commit_tag
+  register: azerothcore_git_commit_tag
 
 - name: Use last commit as name reference
   ansible.builtin.set_fact:
-    azerothcore_server_release: "{{ azerothcore_server }}_{{ azerothcore_branch }}_{{ git_commit_tag.stdout }}"
+    azerothcore_server_release: "{{ azerothcore_server }}_{{ azerothcore_branch }}_{{ azerothcore_git_commit_tag.stdout }}"
 
 # If this folder exists, we already compiled the current version...
 - name: Check if the current version is compiled already
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}"
-  register: release_folder
+  register: azerothcore_release_folder
 
 - name: Information if we don't need to compile
   ansible.builtin.debug:
-    msg: "Server for release {{ git_commit_tag.stdout }} already exists, will exit"
-  when: release_folder.stat.exists
+    msg: "Server for release {{ azerothcore_git_commit_tag.stdout }} already exists, will exit"
+  when: azerothcore_release_folder.stat.exists
 
 - ansible.builtin.meta: end_play
-  when: release_folder.stat.exists
+  when: azerothcore_release_folder.stat.exists
 
 #####################
 # Custom modules
@@ -47,13 +47,13 @@
     paths: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/modules/"
     recurse: false
     file_type: directory
-  register: modules_folder
+  register: azerothcore_modules_folder
 
 - name: Update modules
   ansible.builtin.shell: cd "{{ item.path }}" && git pull
   with_items:
-    - "{{ modules_folder.files }}"
-  when: modules_folder is defined and modules_folder != ""
+    - "{{ azerothcore_modules_folder.files }}"
+  when: azerothcore_modules_folder is defined and azerothcore_modules_folder != ""
 
 #####################
 # Build
@@ -83,7 +83,7 @@
 
 - name: Compiling register start
   ansible.builtin.set_fact:
-    compile_start: "{{ now() }}"
+    azerothcore_compile_start: "{{ now() }}"
 
 - name: Compile AzerothCore server
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && ninja
@@ -94,11 +94,11 @@
 
 - name: Compiling register end
   ansible.builtin.set_fact:
-    compile_end: "{{ now() }}"
+    azerothcore_compile_end: "{{ now() }}"
 
 - name: Print execution time
   ansible.builtin.debug:
-    msg: "Long operation start: {{ compile_start }}, end: {{ compile_end }}"
+    msg: "Long operation start: {{ azerothcore_compile_start }}, end: {{ azerothcore_compile_end }}"
 
 - name: Install AzerothCore server
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && ninja install

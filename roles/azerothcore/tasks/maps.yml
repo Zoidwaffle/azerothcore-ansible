@@ -3,7 +3,7 @@
 - name: Check if former build is present
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}"
-  register: former_build
+  register: azerothcore_former_build
 
 # Isn't there a better way? This is not an elegant solution but at best an indicator...
 # Compare the old tools with the new - if the same, no updates will be needed. This requires 'bash' and not the default 'sh'
@@ -11,13 +11,13 @@
   ansible.builtin.shell: if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi
   args:
     executable: /bin/bash
-  register: map_files_diff
-  when: former_build.stat.islnk is defined and former_build.stat.islnk
+  register: azerothcore_map_files_diff
+  when: azerothcore_former_build.stat.islnk is defined and azerothcore_former_build.stat.islnk
 
 - ansible.builtin.debug:
-    # msg: "map_files_diff: {{ map_files_diff.stdout }}"
+    # msg: "map_files_diff: {{ azerothcore_map_files_diff.stdout }}"
     msg: "if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi"
-  when: map_files_diff.stdout is defined
+  when: azerothcore_map_files_diff.stdout is defined
 
 - name: Create server data folder
   ansible.builtin.file:
@@ -33,7 +33,7 @@
 
 - name: Maps register start
   ansible.builtin.set_fact:
-    maps_start: "{{ now() }}"
+    azerothcore_maps_start: "{{ now() }}"
 
 # Just in case some mess was left behind from earlier...
 - name: Clean up previous map related folders
@@ -46,22 +46,22 @@
     - maps
     - mmaps
     - vmaps
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: ( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )
 
 - name: Information in case new maps have to be created
   ansible.builtin.debug:
     msg: "New maps etc. will be created, be patient, this will take a while!"
-  when: ( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )
+  when: ( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )
 
 # DBC and Maps
 - name: Extract DBC and Maps files
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/map_extractor
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 # Visual Maps
 - name: Extract Visual Maps
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/vmap4_extractor
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Create Visual Maps folder
   ansible.builtin.file:
@@ -70,11 +70,11 @@
     mode: "0755"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Assemble Visual Maps
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/vmap4_assembler Buildings vmaps
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 # Movement Maps
 - name: Create Movement Maps folder
@@ -84,19 +84,19 @@
     mode: "0755"
     owner: "{{ azerothcore_user }}"
     group: "{{ azerothcore_user }}"
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Extract Movement Maps files
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/" && /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/mmaps_generator
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Maps register end
   ansible.builtin.set_fact:
-    maps_end: "{{ now() }}"
+    azerothcore_maps_end: "{{ now() }}"
 
 - name: Print execution time
   ansible.builtin.debug:
-    msg: "Long operation start: {{ maps_start }}, end: {{ maps_end }}"
+    msg: "Long operation start: {{ azerothcore_maps_start }}, end: {{ azerothcore_maps_end }}"
 
 #####################
 # Copy new files and cleanup
@@ -113,7 +113,7 @@
     - maps
     - mmaps
     - vmaps
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 - name: Clean up new map related folders
   ansible.builtin.file:
@@ -125,7 +125,7 @@
     - maps
     - mmaps
     - vmaps
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'different' ) or ( former_build.stat.exists is defined and former_build.stat.exists == false )) and azerothcore_tools == "all"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'different' ) or ( azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false )) and azerothcore_tools == "all"
 
 #####################
 # Copy previous maps over since no changes where detected
@@ -142,4 +142,4 @@
     - mmaps
     - vmaps
     - vmaps
-  when: (( map_files_diff.stdout is defined and map_files_diff.stdout == 'similar' )) or azerothcore_tools == "0"
+  when: (( azerothcore_map_files_diff.stdout is defined and azerothcore_map_files_diff.stdout == 'similar' )) or azerothcore_tools == "0"

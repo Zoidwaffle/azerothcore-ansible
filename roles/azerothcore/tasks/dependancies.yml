@@ -49,7 +49,7 @@
     password: "{{ azerothcore_user_password }}"
     groups: "sudo"
   become: true
-  register: user_created
+  register: azerothcore_user_created
 
 - name: Allow various sudo commands
   ansible.builtin.template:
@@ -82,12 +82,12 @@
 - name: Check if the client folder exists
   ansible.builtin.stat:
     path: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}"
-  register: client_folder
+  register: azerothcore_client_folder
 
 - name: Notify of problems
   ansible.builtin.debug:
     msg: "You need to place the client in folder '/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}'"
-  when: client_folder.stat.exists == false
+  when: azerothcore_client_folder.stat.exists == false
 
 #####################
 # If the local user was just created, we will exit
@@ -96,7 +96,7 @@
 - name: Information if we need to restart Ansible or not
   ansible.builtin.debug:
     msg: "User '{{ azerothcore_user }}' just created or updated. Please run the playbook again as user '{{ azerothcore_user }}'!"
-  when: user_created.changed
+  when: azerothcore_user_created.changed
 
 - ansible.builtin.meta: end_play
-  when: user_created.changed or client_folder.stat.exists == false
+  when: azerothcore_user_created.changed or azerothcore_client_folder.stat.exists == false

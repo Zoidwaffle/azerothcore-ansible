@@ -18,7 +18,7 @@
 # Only run this if there is no previous server aka a new install
 - name: Create databases, handle users etc.
   ansible.builtin.shell: mysql < "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/create_databases.sql"
-  when: former_build.stat.exists is defined and former_build.stat.exists == false
+  when: azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == false
   become: true
 
 #####################
@@ -41,4 +41,4 @@
 
 - name: Backup databases
   ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/backup/" && ./backup.sh
-  when: former_build.stat.exists is defined and former_build.stat.exists == true
+  when: azerothcore_former_build.stat.exists is defined and azerothcore_former_build.stat.exists == true
