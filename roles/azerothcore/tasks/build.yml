@@ -87,9 +87,25 @@
     azerothcore_compile_start: "{{ now() }}"
 
 - name: Compile AzerothCore server
-  ansible.builtin.shell: cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build" && ninja
+  ansible.builtin.shell: |
+    set -o pipefail
+    cd "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/build"
+    ninja 2>&1 | tee compile.log
+  args:
+    executable: /bin/bash
   async: 7200
-  poll: 15
+  poll: 0
+  register: azerothcore_compile_job
+  become: true
+  become_user: "{{ azerothcore_user }}"
+
+- name: Monitor compilation progress every 30 seconds
+  ansible.builtin.include_tasks: "tasks/monitor_compile.yml"
+
+- name: Verify compilation succeeded
+  ansible.builtin.async_status:
+    jid: "{{ azerothcore_compile_job.ansible_job_id }}"
+  register: azerothcore_compile_final
   become: true
   become_user: "{{ azerothcore_user }}"
 
