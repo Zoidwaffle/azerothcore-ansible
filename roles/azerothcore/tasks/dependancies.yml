@@ -98,5 +98,6 @@
     msg: "User '{{ azerothcore_user }}' just created or updated. Please run the playbook again as user '{{ azerothcore_user }}'!"
   when: azerothcore_user_created.changed
 
-- ansible.builtin.meta: end_play
+- name: End play if user was created or client folder is missing
+  ansible.builtin.meta: end_play
   when: azerothcore_user_created.changed or azerothcore_client_folder.stat.exists == false

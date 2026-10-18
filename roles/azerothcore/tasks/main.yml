@@ -15,7 +15,8 @@
     msg: "Please copy './group_vars/all.dist' -> ./group_vars/all' and modify it"
   when: azerothcore_local_settings.stat is defined and azerothcore_local_settings.stat.exists == false
 
-- ansible.builtin.meta: end_play
+- name: End play if configuration file does not exist
+  ansible.builtin.meta: end_play
   when: azerothcore_local_settings.stat is defined and azerothcore_local_settings.stat.exists == false
 
 #####################

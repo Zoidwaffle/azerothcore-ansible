@@ -35,7 +35,8 @@
     msg: "Server for release {{ azerothcore_git_commit_tag.stdout }} already exists, will exit"
   when: azerothcore_release_folder.stat.exists
 
-- ansible.builtin.meta: end_play
+- name: End play if current release is already compiled
+  ansible.builtin.meta: end_play
   when: azerothcore_release_folder.stat.exists
 
 #####################

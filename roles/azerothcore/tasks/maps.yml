@@ -14,7 +14,8 @@
   register: azerothcore_map_files_diff
   when: azerothcore_former_build.stat.islnk is defined and azerothcore_former_build.stat.islnk
 
-- ansible.builtin.debug:
+- name: Debug map-tools comparison result
+  ansible.builtin.debug:
     # msg: "map_files_diff: {{ azerothcore_map_files_diff.stdout }}"
     msg: "if [ $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) == $(du -c --  /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/{mmaps_generator,map_extractor,vmap4_assembler,vmap4_extractor} | tail -n 1 | cut -f1) ]; then echo 'similar'; else echo 'different'; fi"
   when: azerothcore_map_files_diff.stdout is defined
