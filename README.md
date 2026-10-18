@@ -97,10 +97,9 @@ sudo systemctl reload authserver
 sudo systemctl status authserver
 ```
 
-To see the current status of either server and get the CLI as user azerothcore do:
+To see the current status of the server and get the CLI as user azerothcore do:
 
 ```
-screen -r authserver
 screen -r worldserver
 ```
 

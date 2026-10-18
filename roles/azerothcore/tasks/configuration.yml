@@ -167,16 +167,6 @@
     - { regexmatch: '^LogsDir =', insertstring: 'LogsDir = "../log"' }
   when: azerothcore_authserver_conf.stat.exists is defined and azerothcore_authserver_conf.stat.exists == false
 
-- name: Enable auth- and worldserver services
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    enabled: true
-    masked: false
-  with_items:
-    - "worldserver"
-    - "authserver"
-
-
 #####################
 # Database script
 #####################
@@ -220,6 +210,7 @@
 
 - name: Enable systemd services
   ansible.builtin.systemd:
+    daemon_reload: true
     enabled: true
     name:
       - authserver

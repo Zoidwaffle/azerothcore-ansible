@@ -1,20 +1,19 @@
 [Unit]
 Description=AzerothCore World Server
+After=network-online.target authserver.service mysql.service mariadb.service
+Wants=network-online.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=forking
-WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin
 User={{ azerothcore_user }}
-
+WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin
 ExecStart=/usr/bin/screen -dmS worldserver /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/worldserver
-
-ExecReload=/usr/bin/screen -S worldserver -p 0 -X stuff "server shutdown force 0\\r"; /usr/bin/screen -dmS worldserver /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/worldserver
-
-ExecStop=/usr/bin/screen -S worldserver -p 0 -X stuff "server shutdown force 0\\r"
-RestartSec=10s
-
+ExecStop=/usr/bin/screen -S worldserver -p 0 -X stuff "server shutdown 10\r"
+TimeoutStopSec=180s
 Restart=always
-
+RestartSec=10s
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target

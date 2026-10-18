@@ -1,22 +1,20 @@
-# Inspired by https://github.com/zechs6437/trinity-systemd
-
 [Unit]
 Description=AzerothCore Authentication Server
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+StartLimitIntervalSec=0
 
 [Service]
-Type=forking
-WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin
+Type=simple
 User={{ azerothcore_user }}
-
-ExecStart=/usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/authserver
-
-ExecReload=/usr/bin/killall -w -s 15 authserver; /usr/bin/screen -dmS authserver /home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/authserver
-
-ExecStop=/usr/bin/killall -w -s 15 authserver
-RestartSec=10s
-
+WorkingDirectory=/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin
+ExecStart=/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/bin/authserver
 Restart=always
-
+RestartSec=5s
+LimitNOFILE=65535
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=authserver
 
 [Install]
 WantedBy=multi-user.target
