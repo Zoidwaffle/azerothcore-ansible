@@ -108,6 +108,7 @@
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_wow_client }}/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/"
     remote_src: true
+    mode: "preserve"
   with_items:
     - dbc
     - maps
@@ -136,6 +137,7 @@
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server }}/data/{{ item }}"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/"
     remote_src: true
+    mode: "preserve"
   with_items:
     - dbc
     - maps

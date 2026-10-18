@@ -32,6 +32,7 @@
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/"
     force: false # This is important
     remote_src: true
+    mode: "preserve"
   with_items:
     - "{{ azerothcore_previousserver_files.stdout_lines }}"
   when: azerothcore_previousserver_conf.stat.exists is defined and azerothcore_previousserver_conf.stat.exists == true
@@ -53,6 +54,7 @@
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/modules/"
     force: false # This is important
     remote_src: true
+    mode: "preserve"
   with_items:
     - "{{ azerothcore_previousmodule_files.stdout_lines }}"
   when: azerothcore_previousmodule_conf.stat.exists is defined and azerothcore_previousmodule_conf.stat.exists == true
@@ -73,6 +75,7 @@
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/data/dbc/"
     force: false # This is important
     remote_src: true
+    mode: "preserve"
   with_items:
     - "{{ azerothcore_dbc_files.stdout_lines }}"
   when: azerothcore_previousserver_conf.stat.exists is defined and azerothcore_previousserver_conf.stat.exists == true
@@ -91,6 +94,7 @@
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/worldserver.conf"
     remote_src: true
+    mode: "preserve"
   when: azerothcore_worldserver_conf.stat.exists is defined and azerothcore_worldserver_conf.stat.exists == false
 
 - name: Modify new 'worldserver.conf'
@@ -116,6 +120,7 @@
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf.dist"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_server_release }}/etc/authserver.conf"
     remote_src: true
+    mode: "preserve"
   when: azerothcore_authserver_conf.stat.exists is defined and azerothcore_authserver_conf.stat.exists == false
 
 - name: Modify new 'authserver.conf'
@@ -147,6 +152,7 @@
     src: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/dist/config.sh"
     dest: "/home/{{ azerothcore_user }}/{{ azerothcore_folder }}/{{ azerothcore_source }}/conf/"
     remote_src: true
+    mode: "preserve"
 
 - name: Modify 'config.sh'
   ansible.builtin.replace:
@@ -171,6 +177,7 @@
     dest: "/etc/systemd/system/{{ item }}"
     owner: "root"
     group: "root"
+    mode: "0644"
   with_items:
     - authserver.service
     - worldserver.service

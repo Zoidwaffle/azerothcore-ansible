@@ -123,3 +123,4 @@
     content: |
       [client]
       password = "{{ azerothcore_db_password }}"
+    mode: "0600"
